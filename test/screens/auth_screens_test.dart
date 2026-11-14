@@ -4,15 +4,21 @@ import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import 'package:rnz_store/data/local_store.dart';
 import 'package:rnz_store/data/repositories/auth_repository.dart';
+import 'package:rnz_store/data/repositories/cart_repository.dart';
+import 'package:rnz_store/data/repositories/catalog_repository.dart';
 import 'package:rnz_store/data/repositories/profile_repository.dart';
 import 'package:rnz_store/data/seed_data.dart';
 import 'package:rnz_store/routing/app_router.dart';
 import 'package:rnz_store/state/auth_controller.dart';
+import 'package:rnz_store/state/cart_controller.dart';
+import 'package:rnz_store/state/catalog_controller.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 void main() {
   late LocalStore store;
   late AuthController auth;
+  late CatalogController catalog;
+  late CartController cart;
   late GoRouter router;
 
   setUp(() async {
@@ -20,6 +26,9 @@ void main() {
     store = await LocalStore.open();
     await store.seedIfNeeded();
     auth = AuthController(AuthRepository(store), ProfileRepository(store));
+    final catalogRepository = CatalogRepository(store);
+    catalog = CatalogController(catalogRepository);
+    cart = CartController(CartRepository(store, catalogRepository), auth);
     router = buildRouter(auth);
   });
 
@@ -31,6 +40,8 @@ void main() {
         providers: [
           Provider<LocalStore>.value(value: store),
           ChangeNotifierProvider<AuthController>.value(value: auth),
+          ChangeNotifierProvider<CatalogController>.value(value: catalog),
+          ChangeNotifierProvider<CartController>.value(value: cart),
         ],
         child: MaterialApp.router(routerConfig: router),
       ),

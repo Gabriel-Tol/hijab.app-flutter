@@ -5,7 +5,10 @@ import '../screens/auth/forgot_password_screen.dart';
 import '../screens/auth/login_screen.dart';
 import '../screens/auth/register_screen.dart';
 import '../screens/auth/reset_password_screen.dart';
+import '../screens/home/home_screen.dart';
+import '../screens/home/search_screen.dart';
 import '../screens/onboarding_screen.dart';
+import '../screens/product/product_detail_screen.dart';
 import '../screens/splash_screen.dart';
 import '../state/auth_controller.dart';
 
@@ -63,9 +66,14 @@ GoRouter buildRouter(AuthController auth) {
         '/reset-password',
         (context, state) => const ResetPasswordScreen(),
       ),
-      _route('/home', 'Beranda'),
-      _route('/search', 'Cari'),
-      _route('/product/:id', 'Detail Produk'),
+      _screen('/home', (context, state) => const HomeScreen()),
+      _screen('/search', (context, state) => const SearchScreen()),
+      _screen(
+        '/product/:id',
+        (context, state) => ProductDetailScreen(
+          productId: state.pathParameters['id']!,
+        ),
+      ),
       _route('/privacy', 'Kebijakan Privasi'),
       _route('/cart', 'Keranjang'),
       _route('/checkout', 'Checkout'),
