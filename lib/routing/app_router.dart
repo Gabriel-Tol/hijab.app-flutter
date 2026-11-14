@@ -1,4 +1,3 @@
-import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 import '../screens/address/address_form_screen.dart';
@@ -11,11 +10,16 @@ import '../screens/cart/cart_screen.dart';
 import '../screens/checkout/checkout_screen.dart';
 import '../screens/home/home_screen.dart';
 import '../screens/home/search_screen.dart';
+import '../screens/legal/privacy_screen.dart';
 import '../screens/onboarding_screen.dart';
 import '../screens/orders/order_detail_screen.dart';
 import '../screens/orders/orders_screen.dart';
 import '../screens/orders/payment_screen.dart';
 import '../screens/product/product_detail_screen.dart';
+import '../screens/profile/change_password_screen.dart';
+import '../screens/profile/delete_account_screen.dart';
+import '../screens/profile/profile_edit_screen.dart';
+import '../screens/profile/profile_screen.dart';
 import '../screens/splash_screen.dart';
 import '../state/auth_controller.dart';
 
@@ -80,8 +84,9 @@ GoRouter buildRouter(AuthController auth) {
         (context, state) =>
             ProductDetailScreen(productId: state.pathParameters['id']!),
       ),
-      _route('/privacy', 'Kebijakan Privasi'),
-      _screen('/cart', (context, state) => const CartScreen()),      _screen('/checkout', (context, state) => const CheckoutScreen()),
+      _screen('/privacy', (context, state) => const PrivacyScreen()),
+      _screen('/cart', (context, state) => const CartScreen()),
+      _screen('/checkout', (context, state) => const CheckoutScreen()),
       _screen('/addresses', (context, state) => const AddressListScreen()),
       _screen('/addresses/new', (context, state) => const AddressFormScreen()),
       _screen(
@@ -102,35 +107,20 @@ GoRouter buildRouter(AuthController auth) {
           orderId: state.pathParameters['id']!,
         ),
       ),
-      _route('/profile', 'Profil'),
-      _route('/profile/edit', 'Ubah Profil'),
-      _route('/change-password', 'Ubah Kata Sandi'),
-      _route('/delete-account', 'Hapus Akun'),
+      _screen('/profile', (context, state) => const ProfileScreen()),
+      _screen('/profile/edit', (context, state) => const ProfileEditScreen()),
+      _screen(
+        '/change-password',
+        (context, state) => const ChangePasswordScreen(),
+      ),
+      _screen(
+        '/delete-account',
+        (context, state) => const DeleteAccountScreen(),
+      ),
     ],
   );
 }
 
 GoRoute _screen(String path, GoRouterWidgetBuilder builder) {
   return GoRoute(path: path, builder: builder);
-}
-
-GoRoute _route(String path, String title) {
-  return GoRoute(
-    path: path,
-    builder: (context, state) => _PlaceholderScreen(title: title),
-  );
-}
-
-class _PlaceholderScreen extends StatelessWidget {
-  const _PlaceholderScreen({required this.title});
-
-  final String title;
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: Text(title)),
-      body: Center(child: Text(title)),
-    );
-  }
 }
