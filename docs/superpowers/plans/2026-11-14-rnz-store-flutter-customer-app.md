@@ -1263,7 +1263,7 @@ git commit -m "feat: add profile, security, and privacy screens"
 4. `await store.seedIfNeeded()`.
 5. Construct repositories and controllers; `runApp(RnzApp(...))`.
 
-`RnzApp` uses `MultiProvider` (repositories + auth/cart/order controllers), `MaterialApp.router` with `buildRouter(auth)`, `AppTheme.light`, locale `id_ID`, and delegates.
+`RnzApp` uses `MultiProvider` (`LocalStore` + repositories + auth/cart/order controllers), `MaterialApp.router` with `buildRouter(auth)`, `AppTheme.light`, locale `id_ID`, and delegates.
 
 - [ ] **Step 2: Replace all placeholder screens**
 
