@@ -8,7 +8,7 @@ class AppColors {
   static const Color forest = Color(0xFF223A2D);
   static const Color terracotta = Color(0xFFC06B4E);
   static const Color ink = Color(0xFF1B1A17);
-  static const Color muted = Color(0xFF6F6A60);
+  static const Color muted = Color(0xFF5A564E);
   static const Color line = Color(0xFFE3DACB);
   static const Color success = Color(0xFF3D6B4F);
   static const Color danger = Color(0xFFA84532);

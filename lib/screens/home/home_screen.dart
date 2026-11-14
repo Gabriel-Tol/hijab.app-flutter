@@ -150,19 +150,19 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
       child: ClipRRect(
         borderRadius: BorderRadius.circular(AppRadius.medium),
-        child: AspectRatio(
-          aspectRatio: 4 / 3,
-          child: Stack(
-            fit: StackFit.expand,
-            children: [
-              Image.asset(
+        child: Stack(
+          children: [
+            Positioned.fill(
+              child: Image.asset(
                 AppAssets.hero,
                 fit: BoxFit.cover,
                 semanticLabel: 'Koleksi hijab tenun RnZ Store',
                 errorBuilder: (context, error, stackTrace) =>
                     const ColoredBox(color: AppColors.line),
               ),
-              DecoratedBox(
+            ),
+            Positioned.fill(
+              child: DecoratedBox(
                 decoration: BoxDecoration(
                   gradient: LinearGradient(
                     begin: Alignment.bottomLeft,
@@ -176,33 +176,34 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                 ),
               ),
-              Padding(
-                padding: const EdgeInsets.all(AppSpacing.xl),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: [
-                    const Text(
-                      'Tenang, anggun, siap menemani harimu.',
-                      style: TextStyle(
-                        fontFamily: 'Fraunces',
-                        fontSize: 26,
-                        height: 1.15,
-                        fontWeight: FontWeight.w600,
-                        color: AppColors.ivory,
-                      ),
+            ),
+            Padding(
+              padding: const EdgeInsets.all(AppSpacing.xl),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  const SizedBox(height: 60),
+                  const Text(
+                    'Tenang, anggun, siap menemani harimu.',
+                    style: TextStyle(
+                      fontFamily: 'Fraunces',
+                      fontSize: 26,
+                      height: 1.15,
+                      fontWeight: FontWeight.w600,
+                      color: AppColors.ivory,
                     ),
-                    const SizedBox(height: AppSpacing.lg),
-                    RnzButton(
-                      label: 'Jelajahi Koleksi',
-                      expand: false,
-                      onPressed: () => context.push('/search'),
-                    ),
-                  ],
-                ),
+                  ),
+                  const SizedBox(height: AppSpacing.lg),
+                  RnzButton(
+                    label: 'Jelajahi Koleksi',
+                    expand: false,
+                    onPressed: () => context.push('/search'),
+                  ),
+                ],
               ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );

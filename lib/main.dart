@@ -1,33 +1,23 @@
 import 'package:flutter/material.dart';
+import 'package:intl/date_symbol_data_local.dart';
 
-import 'core/app_theme.dart';
-import 'core/constants.dart';
+import 'app.dart';
+import 'data/local_store.dart';
+import 'screens/recovery_screen.dart';
 
-void main() {
-  runApp(const RnzStoreApp());
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await initializeDateFormatting('id_ID');
+
+  await _bootstrap();
 }
 
-class RnzStoreApp extends StatelessWidget {
-  const RnzStoreApp({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      title: AppConstants.appName,
-      debugShowCheckedModeBanner: false,
-      theme: AppTheme.light,
-      home: const Scaffold(
-        body: Center(
-          child: Text(
-            'RnZ Store',
-            style: TextStyle(
-              fontFamily: 'Fraunces',
-              fontSize: 28,
-              fontWeight: FontWeight.w600,
-            ),
-          ),
-        ),
-      ),
-    );
+Future<void> _bootstrap() async {
+  try {
+    final store = await LocalStore.open();
+    await store.seedIfNeeded();
+    runApp(RnzApp.create(store));
+  } on StoreCorruptException {
+    runApp(RecoveryScreen(onRecovered: () => _bootstrap()));
   }
 }
