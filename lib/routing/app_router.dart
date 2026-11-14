@@ -1,10 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
+import '../screens/address/address_form_screen.dart';
+import '../screens/address/address_list_screen.dart';
 import '../screens/auth/forgot_password_screen.dart';
 import '../screens/auth/login_screen.dart';
 import '../screens/auth/register_screen.dart';
 import '../screens/auth/reset_password_screen.dart';
+import '../screens/cart/cart_screen.dart';
+import '../screens/checkout/checkout_screen.dart';
 import '../screens/home/home_screen.dart';
 import '../screens/home/search_screen.dart';
 import '../screens/onboarding_screen.dart';
@@ -70,16 +74,19 @@ GoRouter buildRouter(AuthController auth) {
       _screen('/search', (context, state) => const SearchScreen()),
       _screen(
         '/product/:id',
-        (context, state) => ProductDetailScreen(
-          productId: state.pathParameters['id']!,
-        ),
+        (context, state) =>
+            ProductDetailScreen(productId: state.pathParameters['id']!),
       ),
       _route('/privacy', 'Kebijakan Privasi'),
-      _route('/cart', 'Keranjang'),
-      _route('/checkout', 'Checkout'),
-      _route('/addresses', 'Alamat'),
-      _route('/addresses/new', 'Tambah Alamat'),
-      _route('/addresses/:id/edit', 'Ubah Alamat'),
+      _screen('/cart', (context, state) => const CartScreen()),
+      _screen('/checkout', (context, state) => const CheckoutScreen()),
+      _screen('/addresses', (context, state) => const AddressListScreen()),
+      _screen('/addresses/new', (context, state) => const AddressFormScreen()),
+      _screen(
+        '/addresses/:id/edit',
+        (context, state) =>
+            AddressFormScreen(addressId: state.pathParameters['id']),
+      ),
       _route('/orders', 'Pesanan'),
       _route('/orders/:id', 'Detail Pesanan'),
       _route('/orders/:id/payment', 'Pembayaran'),
