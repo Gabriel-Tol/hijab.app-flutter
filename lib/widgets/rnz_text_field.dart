@@ -16,9 +16,11 @@ class RnzTextField extends StatelessWidget {
     this.suffixIcon,
     this.autofillHints,
     this.enabled = true,
+    this.fieldKey,
   });
 
   final String label;
+  final Key? fieldKey;
   final TextEditingController? controller;
   final String? errorText;
   final String? hintText;
@@ -35,6 +37,7 @@ class RnzTextField extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return TextFormField(
+      key: fieldKey,
       controller: controller,
       obscureText: obscureText,
       keyboardType: keyboardType,

@@ -1,6 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
+import '../screens/auth/forgot_password_screen.dart';
+import '../screens/auth/login_screen.dart';
+import '../screens/auth/register_screen.dart';
+import '../screens/auth/reset_password_screen.dart';
+import '../screens/onboarding_screen.dart';
+import '../screens/splash_screen.dart';
 import '../state/auth_controller.dart';
 
 const List<String> _privatePrefixes = [
@@ -45,12 +51,18 @@ GoRouter buildRouter(AuthController auth) {
       return null;
     },
     routes: [
-      _route('/splash', 'RnZ Store'),
-      _route('/onboarding', 'Selamat Datang'),
-      _route('/login', 'Masuk'),
-      _route('/register', 'Daftar'),
-      _route('/forgot-password', 'Lupa Kata Sandi'),
-      _route('/reset-password', 'Atur Ulang Kata Sandi'),
+      _screen('/splash', (context, state) => const SplashScreen()),
+      _screen('/onboarding', (context, state) => const OnboardingScreen()),
+      _screen('/login', (context, state) => const LoginScreen()),
+      _screen('/register', (context, state) => const RegisterScreen()),
+      _screen(
+        '/forgot-password',
+        (context, state) => const ForgotPasswordScreen(),
+      ),
+      _screen(
+        '/reset-password',
+        (context, state) => const ResetPasswordScreen(),
+      ),
       _route('/home', 'Beranda'),
       _route('/search', 'Cari'),
       _route('/product/:id', 'Detail Produk'),
@@ -69,6 +81,10 @@ GoRouter buildRouter(AuthController auth) {
       _route('/delete-account', 'Hapus Akun'),
     ],
   );
+}
+
+GoRoute _screen(String path, GoRouterWidgetBuilder builder) {
+  return GoRoute(path: path, builder: builder);
 }
 
 GoRoute _route(String path, String title) {
