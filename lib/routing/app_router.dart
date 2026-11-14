@@ -12,6 +12,9 @@ import '../screens/checkout/checkout_screen.dart';
 import '../screens/home/home_screen.dart';
 import '../screens/home/search_screen.dart';
 import '../screens/onboarding_screen.dart';
+import '../screens/orders/order_detail_screen.dart';
+import '../screens/orders/orders_screen.dart';
+import '../screens/orders/payment_screen.dart';
 import '../screens/product/product_detail_screen.dart';
 import '../screens/splash_screen.dart';
 import '../state/auth_controller.dart';
@@ -78,8 +81,7 @@ GoRouter buildRouter(AuthController auth) {
             ProductDetailScreen(productId: state.pathParameters['id']!),
       ),
       _route('/privacy', 'Kebijakan Privasi'),
-      _screen('/cart', (context, state) => const CartScreen()),
-      _screen('/checkout', (context, state) => const CheckoutScreen()),
+      _screen('/cart', (context, state) => const CartScreen()),      _screen('/checkout', (context, state) => const CheckoutScreen()),
       _screen('/addresses', (context, state) => const AddressListScreen()),
       _screen('/addresses/new', (context, state) => const AddressFormScreen()),
       _screen(
@@ -87,9 +89,19 @@ GoRouter buildRouter(AuthController auth) {
         (context, state) =>
             AddressFormScreen(addressId: state.pathParameters['id']),
       ),
-      _route('/orders', 'Pesanan'),
-      _route('/orders/:id', 'Detail Pesanan'),
-      _route('/orders/:id/payment', 'Pembayaran'),
+      _screen('/orders', (context, state) => const OrdersScreen()),
+      _screen(
+        '/orders/:id',
+        (context, state) => OrderDetailScreen(
+          orderId: state.pathParameters['id']!,
+        ),
+      ),
+      _screen(
+        '/orders/:id/payment',
+        (context, state) => PaymentScreen(
+          orderId: state.pathParameters['id']!,
+        ),
+      ),
       _route('/profile', 'Profil'),
       _route('/profile/edit', 'Ubah Profil'),
       _route('/change-password', 'Ubah Kata Sandi'),

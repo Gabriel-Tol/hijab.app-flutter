@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
+import 'package:intl/date_symbol_data_local.dart';
 import 'package:provider/provider.dart';
 import 'package:rnz_store/data/local_store.dart';
 import 'package:rnz_store/data/models/address.dart';
@@ -27,6 +28,10 @@ void main() {
   late CartController cart;
   late OrderController orders;
   late GoRouter router;
+
+  setUpAll(() async {
+    await initializeDateFormatting('id_ID');
+  });
 
   setUp(() async {
     SharedPreferences.setMockInitialValues({});
@@ -266,7 +271,10 @@ void main() {
     expect(button.onPressed, isNotNull);
 
     await tester.tap(find.byKey(const Key('checkout-submit')));
-    await tester.pumpAndSettle();
+    // The payment screen runs a 1s timer, so pumpAndSettle would never settle.
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 300));
+    await tester.pump(const Duration(milliseconds: 300));
 
     expect(orders.orders.length, before + 1);
     expect(cart.lines, isEmpty);
