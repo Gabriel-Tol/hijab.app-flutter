@@ -2,7 +2,7 @@
 
 | | |
 |---|---|
-| **Status** | Desain disetujui; menunggu review spec |
+| **Status** | Disetujui; rencana implementasi dibuat |
 | **Tanggal** | 14 November 2026 |
 | **Sumber requirement** | `PRD_RnZ_Store_Flutter.md` |
 | **Ruang lingkup** | Aplikasi pelanggan Flutter, semua story Must + Should (US-01–22) |
