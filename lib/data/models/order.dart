@@ -352,6 +352,7 @@ class Order {
 
   Order copyWith({
     OrderStatus? status,
+    Map<String, dynamic>? addressSnapshot,
     List<PaymentProof>? proofs,
     List<StatusLog>? statusLogs,
     Object? shipment = _unsetOrder,
@@ -367,7 +368,7 @@ class Order {
       shippingCost: shippingCost,
       shippingNote: shippingNote,
       total: total,
-      addressSnapshot: addressSnapshot,
+      addressSnapshot: addressSnapshot ?? this.addressSnapshot,
       paymentMethodSnapshot: paymentMethodSnapshot,
       payBefore: payBefore,
       createdAt: createdAt,
