@@ -60,6 +60,11 @@ $routes->group('admin', ['filter' => 'adminAuth'], function ($routes) {
 
 // REST API v1 for Mobile Flutter
 $routes->group('api/v1', function ($routes) {
+    // Handle OPTIONS Preflight for browser CORS
+    $routes->options('(:any)', static function () {
+        return response()->setStatusCode(200);
+    });
+
     // Public Catalog & Settings
     $routes->get('categories', 'Api\V1\CatalogController::getCategories');
     $routes->get('products', 'Api\V1\CatalogController::getProducts');
