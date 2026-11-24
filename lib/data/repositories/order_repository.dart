@@ -1,6 +1,8 @@
 import 'dart:convert';
 import 'dart:typed_data';
 
+import 'package:flutter/foundation.dart';
+
 import '../../core/constants.dart';
 import '../../core/ids.dart';
 import '../../core/result.dart';
@@ -547,9 +549,11 @@ class OrderRepository {
           if (data['id'] != null) {
             backendId = int.tryParse(data['id'].toString());
           }
+        } else {
+          debugPrint('RnZ ApiClient checkout warning: ${apiRes.error?.message}');
         }
-      } catch (_) {
-        // Safe offline fallback
+      } catch (e) {
+        debugPrint('RnZ ApiClient checkout exception: $e');
       }
     }
 

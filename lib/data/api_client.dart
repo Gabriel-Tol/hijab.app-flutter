@@ -95,7 +95,7 @@ class ApiClient {
 
     try {
       final uri = Uri.parse('$apiUrl/orders/checkout');
-      final response = await _client.post(
+      var response = await _client.post(
         uri,
         headers: {
           'Content-Type': 'application/json',
@@ -107,6 +107,27 @@ class ApiClient {
           'payment_method': paymentMethod,
         }),
       );
+
+      // Otomatis refresh sesi jika token kedaluwarsa (401)
+      if (response.statusCode == 401) {
+        _token = null;
+        await _store.remove('api_jwt_token');
+        final reauth = await ensureAuthenticated();
+        if (reauth.isOk) {
+          response = await _client.post(
+            uri,
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': 'Bearer $_token',
+            },
+            body: jsonEncode({
+              'items': items,
+              'address': address,
+              'payment_method': paymentMethod,
+            }),
+          );
+        }
+      }
 
       final decoded = jsonDecode(response.body);
       if (response.statusCode >= 200 && response.statusCode < 300) {
@@ -139,7 +160,7 @@ class ApiClient {
 
     try {
       final uri = Uri.parse('$apiUrl/orders/$orderId/proof');
-      final request = http.MultipartRequest('POST', uri);
+      var request = http.MultipartRequest('POST', uri);
       request.headers['Authorization'] = 'Bearer $_token';
       request.files.add(
         http.MultipartFile.fromBytes(
@@ -149,8 +170,27 @@ class ApiClient {
         ),
       );
 
-      final streamedResponse = await _client.send(request);
-      final response = await http.Response.fromStream(streamedResponse);
+      var streamedResponse = await _client.send(request);
+      var response = await http.Response.fromStream(streamedResponse);
+
+      if (response.statusCode == 401) {
+        _token = null;
+        await _store.remove('api_jwt_token');
+        final reauth = await ensureAuthenticated();
+        if (reauth.isOk) {
+          request = http.MultipartRequest('POST', uri);
+          request.headers['Authorization'] = 'Bearer $_token';
+          request.files.add(
+            http.MultipartFile.fromBytes(
+              'proof',
+              imageBytes,
+              filename: filename,
+            ),
+          );
+          streamedResponse = await _client.send(request);
+          response = await http.Response.fromStream(streamedResponse);
+        }
+      }
 
       final decoded = jsonDecode(response.body);
       if (response.statusCode >= 200 && response.statusCode < 300) {
@@ -176,12 +216,26 @@ class ApiClient {
 
     try {
       final uri = Uri.parse('$apiUrl/orders');
-      final response = await _client.get(
+      var response = await _client.get(
         uri,
         headers: {
           'Authorization': 'Bearer $_token',
         },
       );
+
+      if (response.statusCode == 401) {
+        _token = null;
+        await _store.remove('api_jwt_token');
+        final reauth = await ensureAuthenticated();
+        if (reauth.isOk) {
+          response = await _client.get(
+            uri,
+            headers: {
+              'Authorization': 'Bearer $_token',
+            },
+          );
+        }
+      }
 
       final decoded = jsonDecode(response.body);
       if (response.statusCode >= 200 && response.statusCode < 300) {

@@ -80,7 +80,12 @@ class ApiConfig {
 
   static String get defaultBaseUrl {
     const fromEnv = String.fromEnvironment('API_BASE_URL');
-    if (fromEnv.isNotEmpty) return fromEnv;
+    if (fromEnv.isNotEmpty &&
+        !fromEnv.contains('xxx') &&
+        !fromEnv.contains('example.com') &&
+        !fromEnv.contains('placeholder')) {
+      return fromEnv;
+    }
     if (kIsWeb) return 'http://localhost:8080';
     return 'http://10.0.2.2:8080';
   }
