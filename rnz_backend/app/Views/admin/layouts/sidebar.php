@@ -6,7 +6,8 @@
 <div class="sidebar">
     <div class="sidebar-brand">
         <i class="bi bi-gem"></i>
-        <span>RnZ Store</span> Admin
+        <span>RnZ Store</span>
+        <span class="brand-badge ms-auto">Admin</span>
     </div>
     <ul class="sidebar-menu">
         <li>
@@ -15,7 +16,7 @@
                 <span>Dashboard</span>
             </a>
         </li>
-        <li class="mt-3 mb-1 px-3 text-uppercase text-muted small fw-bold" style="font-size: 0.72rem; letter-spacing: 0.05rem;">
+        <li class="sidebar-section-title mt-2">
             Katalog & Inventori
         </li>
         <li>
@@ -36,7 +37,7 @@
                 <span>Stok & Opname</span>
             </a>
         </li>
-        <li class="mt-3 mb-1 px-3 text-uppercase text-muted small fw-bold" style="font-size: 0.72rem; letter-spacing: 0.05rem;">
+        <li class="sidebar-section-title mt-2">
             Transaksi
         </li>
         <li>
@@ -53,7 +54,7 @@
                 <span>Laporan Penjualan</span>
             </a>
         </li>
-        <li class="mt-3 mb-1 px-3 text-uppercase text-muted small fw-bold" style="font-size: 0.72rem; letter-spacing: 0.05rem;">
+        <li class="sidebar-section-title mt-2">
             Konfigurasi
         </li>
         <li>

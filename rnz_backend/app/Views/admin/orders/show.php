@@ -2,22 +2,22 @@
 
 <?= $this->section('content') ?>
 <div class="mb-4">
-    <a href="/admin/orders" class="text-decoration-none text-muted small"><i class="bi bi-arrow-left me-1"></i> Kembali ke Daftar Pesanan</a>
+    <a href="/admin/orders" class="text-decoration-none small" style="color: var(--rnz-muted);"><i class="bi bi-arrow-left me-1"></i> Kembali ke Daftar Pesanan</a>
     <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mt-2">
         <div>
-            <h5 class="fw-bold mb-0">Pesanan #<?= esc($order['order_no']) ?></h5>
+            <h5 class="fw-bold font-serif mb-0">Pesanan #<?= esc($order['order_no']) ?></h5>
             <small class="text-muted">Dibuat pada <?= date('d M Y, H:i', strtotime($order['created_at'])) ?> WIB</small>
         </div>
         <div>
             <?php
-                $badgeClass = 'bg-secondary text-white';
+                $badgeClass = 'badge-waiting';
                 $statusText = $order['status'];
-                if ($order['status'] === 'waiting_payment') { $badgeClass = 'bg-secondary text-white'; $statusText = 'Menunggu Pembayaran'; }
-                elseif ($order['status'] === 'verifying_payment') { $badgeClass = 'badge-verifying fw-bold'; $statusText = 'Perlu Verifikasi'; }
-                elseif ($order['status'] === 'processing') { $badgeClass = 'badge-processing fw-bold'; $statusText = 'Sedang Diproses'; }
-                elseif ($order['status'] === 'shipped') { $badgeClass = 'badge-shipped fw-bold'; $statusText = 'Dalam Pengiriman'; }
-                elseif ($order['status'] === 'completed') { $badgeClass = 'badge-completed fw-bold'; $statusText = 'Selesai'; }
-                elseif ($order['status'] === 'cancelled') { $badgeClass = 'badge-cancelled fw-bold'; $statusText = 'Dibatalkan'; }
+                if ($order['status'] === 'waiting_payment') { $badgeClass = 'badge-waiting'; $statusText = 'Menunggu Pembayaran'; }
+                elseif ($order['status'] === 'verifying_payment') { $badgeClass = 'badge-verifying'; $statusText = 'Perlu Verifikasi'; }
+                elseif ($order['status'] === 'processing') { $badgeClass = 'badge-processing'; $statusText = 'Sedang Diproses'; }
+                elseif ($order['status'] === 'shipped') { $badgeClass = 'badge-shipped'; $statusText = 'Dalam Pengiriman'; }
+                elseif ($order['status'] === 'completed') { $badgeClass = 'badge-completed'; $statusText = 'Selesai'; }
+                elseif ($order['status'] === 'cancelled') { $badgeClass = 'badge-cancelled'; $statusText = 'Dibatalkan'; }
             ?>
             <span class="badge <?= $badgeClass ?> px-3 py-2 fs-6 rounded-pill"><?= $statusText ?></span>
         </div>
@@ -71,11 +71,11 @@
                         <div class="d-flex gap-2">
                             <form action="/admin/orders/<?= $order['id'] ?>/approve" method="POST" class="flex-fill">
                                 <?= csrf_field() ?>
-                                <button type="submit" class="btn btn-success w-100 py-2 fw-semibold" onclick="return confirm('Setujui bukti pembayaran pesanan ini?')">
+                                <button type="submit" class="btn btn-rnz w-100 py-2 fw-semibold" onclick="return confirm('Setujui bukti pembayaran pesanan ini?')">
                                     <i class="bi bi-check-circle me-1"></i> Setujui Pembayaran
                                 </button>
                             </form>
-                            <button type="button" class="btn btn-outline-danger flex-fill py-2 fw-semibold" data-bs-toggle="modal" data-bs-target="#modalRejectProof">
+                            <button type="button" class="btn btn-outline-terracotta flex-fill py-2 fw-semibold" data-bs-toggle="modal" data-bs-target="#modalRejectProof">
                                 <i class="bi bi-x-circle me-1"></i> Tolak
                             </button>
                         </div>
@@ -117,7 +117,7 @@
                             <label class="form-label small fw-semibold">Nomor Resi / Bukti Kirim <span class="text-danger">*</span></label>
                             <input type="text" name="tracking_no" class="form-control" placeholder="Contoh: JP1234567890" required>
                         </div>
-                        <button type="submit" class="btn btn-primary w-100 py-2 fw-semibold">
+                        <button type="submit" class="btn btn-rnz w-100 py-2 fw-semibold">
                             <i class="bi bi-send me-1"></i> Simpan Resi & Set Dikirim
                         </button>
                     </form>
@@ -185,7 +185,7 @@
                             </tr>
                             <tr class="table-light">
                                 <td colspan="3" class="text-end fw-bold fs-6 ps-3">Total Pembayaran:</td>
-                                <td class="text-end pe-3 fw-bold fs-6 text-danger">Rp <?= number_format($order['total'], 0, ',', '.') ?></td>
+                                <td class="text-end pe-3 fw-bold fs-6 font-serif" style="color: var(--rnz-terracotta);">Rp <?= number_format($order['total'], 0, ',', '.') ?></td>
                             </tr>
                         </tfoot>
                     </table>

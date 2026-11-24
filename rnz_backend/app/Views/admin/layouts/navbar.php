@@ -1,22 +1,22 @@
 <div class="top-navbar d-flex justify-content-between align-items-center">
     <div class="d-flex align-items-center gap-3">
-        <button class="btn btn-sm btn-light d-lg-none" onclick="toggleSidebar()">
+        <button class="btn btn-sm btn-light border d-lg-none" onclick="toggleSidebar()">
             <i class="bi bi-list fs-5"></i>
         </button>
-        <h5 class="mb-0 fw-semibold text-dark"><?= esc($title ?? 'Dashboard') ?></h5>
+        <h5 class="mb-0 fw-bold font-serif" style="color: var(--rnz-ink);"><?= esc($title ?? 'Dashboard') ?></h5>
     </div>
     <div class="d-flex align-items-center gap-3">
         <div class="d-flex align-items-center gap-2">
-            <div class="rounded-circle bg-secondary text-white d-flex align-items-center justify-content-center" style="width: 36px; height: 36px; font-weight: 600;">
+            <div class="rounded-circle d-flex align-items-center justify-content-center shadow-sm" style="width: 38px; height: 38px; font-weight: 700; background-color: var(--rnz-forest); color: #FFFFFF; font-size: 0.95rem;">
                 <?= strtoupper(substr(session()->get('admin_name') ?? 'A', 0, 1)) ?>
             </div>
             <div class="d-none d-sm-block text-start">
-                <div class="fw-semibold text-dark small mb-0"><?= esc(session()->get('admin_name') ?? 'Admin') ?></div>
-                <div class="text-muted" style="font-size: 0.75rem;">Pemilik Toko</div>
+                <div class="fw-semibold small mb-0" style="color: var(--rnz-ink);"><?= esc(session()->get('admin_name') ?? 'Admin') ?></div>
+                <div style="font-size: 0.75rem; color: var(--rnz-muted);">Pemilik Toko</div>
             </div>
         </div>
-        <div class="vr mx-2"></div>
-        <a href="/admin/logout" class="btn btn-sm btn-outline-danger" title="Keluar">
+        <div class="vr mx-1" style="color: var(--rnz-line);"></div>
+        <a href="/admin/logout" class="btn btn-sm btn-outline-terracotta" title="Keluar">
             <i class="bi bi-box-arrow-right me-1"></i> Keluar
         </a>
     </div>

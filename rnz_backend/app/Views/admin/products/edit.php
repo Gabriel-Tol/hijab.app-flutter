@@ -2,8 +2,8 @@
 
 <?= $this->section('content') ?>
 <div class="mb-4">
-    <a href="/admin/products" class="text-decoration-none text-muted small"><i class="bi bi-arrow-left me-1"></i> Kembali ke Daftar Produk</a>
-    <h5 class="fw-bold mt-1">Ubah Produk: <?= esc($product['name']) ?></h5>
+    <a href="/admin/products" class="text-decoration-none small" style="color: var(--rnz-muted);"><i class="bi bi-arrow-left me-1"></i> Kembali ke Daftar Produk</a>
+    <h5 class="fw-bold font-serif mt-1">Ubah Produk: <?= esc($product['name']) ?></h5>
 </div>
 
 <form action="/admin/products/update/<?= $product['id'] ?>" method="POST" enctype="multipart/form-data">
@@ -85,7 +85,7 @@
             <div class="card border-0 shadow-sm rounded-3">
                 <div class="card-header bg-white py-3 d-flex justify-content-between align-items-center border-bottom">
                     <h6 class="mb-0 fw-bold">Varian Produk & Stok</h6>
-                    <button type="button" class="btn btn-sm btn-outline-primary" onclick="addNewVariantRow()">
+                    <button type="button" class="btn btn-sm btn-outline-rnz" onclick="addNewVariantRow()">
                         <i class="bi bi-plus-lg me-1"></i> Tambah Varian
                     </button>
                 </div>

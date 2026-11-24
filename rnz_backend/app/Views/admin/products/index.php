@@ -3,7 +3,7 @@
 <?= $this->section('content') ?>
 <div class="d-flex flex-wrap justify-content-between align-items-center gap-3 mb-4">
     <div>
-        <h5 class="fw-bold mb-1">Katalog Produk & Varian</h5>
+        <h5 class="fw-bold font-serif mb-1">Katalog Produk & Varian</h5>
         <p class="text-muted small mb-0">Kelola daftar hijab, harga, stok varian warna/ukuran, dan galeri foto.</p>
     </div>
     <a href="/admin/products/create" class="btn btn-rnz">
@@ -32,7 +32,7 @@
                 </select>
             </div>
             <div class="col-12 col-md-3 d-flex gap-2">
-                <button type="submit" class="btn btn-secondary w-100">Filter</button>
+                <button type="submit" class="btn btn-rnz w-100">Filter</button>
                 <?php if (!empty($keyword) || !empty($categoryId)): ?>
                     <a href="/admin/products" class="btn btn-outline-secondary">Reset</a>
                 <?php endif; ?>
@@ -70,9 +70,9 @@
                             <tr>
                                 <td class="ps-3">
                                     <?php if (!empty($prod['thumbnail'])): ?>
-                                        <img src="/<?= esc($prod['thumbnail']) ?>" alt="<?= esc($prod['name']) ?>" class="rounded" style="width: 50px; height: 50px; object-fit: cover;">
+                                        <img src="/<?= esc($prod['thumbnail']) ?>" alt="<?= esc($prod['name']) ?>" class="rounded border" style="width: 50px; height: 50px; object-fit: cover;">
                                     <?php else: ?>
-                                        <div class="bg-light rounded d-flex align-items-center justify-content-center text-muted" style="width: 50px; height: 50px;">
+                                        <div class="bg-light rounded border d-flex align-items-center justify-content-center text-muted" style="width: 50px; height: 50px;">
                                             <i class="bi bi-image"></i>
                                         </div>
                                     <?php endif; ?>
@@ -84,28 +84,28 @@
                                 <td>
                                     <span class="badge bg-light text-dark border"><?= esc($prod['category_name'] ?? 'Tanpa Kategori') ?></span>
                                 </td>
-                                <td class="fw-semibold">Rp <?= number_format($prod['price'], 0, ',', '.') ?></td>
+                                <td class="fw-bold" style="color: var(--rnz-forest);">Rp <?= number_format($prod['price'], 0, ',', '.') ?></td>
                                 <td class="text-center">
                                     <?php if ($prod['total_stock'] <= 0): ?>
-                                        <span class="badge bg-danger">Habis</span>
+                                        <span class="badge badge-cancelled rounded-pill px-2">Habis</span>
                                     <?php elseif ($prod['total_stock'] <= 3): ?>
-                                        <span class="badge bg-warning text-dark"><?= $prod['total_stock'] ?> Unit</span>
+                                        <span class="badge badge-verifying rounded-pill px-2"><?= $prod['total_stock'] ?> Unit</span>
                                     <?php else: ?>
-                                        <span class="badge bg-success-subtle text-success"><?= $prod['total_stock'] ?> Unit</span>
+                                        <span class="badge badge-completed rounded-pill px-2"><?= $prod['total_stock'] ?> Unit</span>
                                     <?php endif; ?>
                                 </td>
                                 <td>
                                     <?php if ($prod['is_active']): ?>
-                                        <span class="badge bg-success-subtle text-success">Aktif</span>
+                                        <span class="badge badge-completed rounded-pill px-2">Aktif</span>
                                     <?php else: ?>
-                                        <span class="badge bg-secondary-subtle text-secondary">Nonaktif</span>
+                                        <span class="badge badge-waiting rounded-pill px-2">Nonaktif</span>
                                     <?php endif; ?>
                                 </td>
                                 <td class="text-end pe-3">
-                                    <a href="/admin/products/edit/<?= $prod['id'] ?>" class="btn btn-sm btn-outline-secondary me-1" title="Ubah">
+                                    <a href="/admin/products/edit/<?= $prod['id'] ?>" class="btn btn-sm btn-outline-rnz me-1 py-1 px-2" title="Ubah">
                                         <i class="bi bi-pencil"></i>
                                     </a>
-                                    <a href="/admin/products/delete/<?= $prod['id'] ?>" class="btn btn-sm btn-outline-danger" title="Hapus" onclick="return confirm('Apakah Anda yakin ingin menghapus produk ini?')">
+                                    <a href="/admin/products/delete/<?= $prod['id'] ?>" class="btn btn-sm btn-outline-terracotta py-1 px-2" title="Hapus" onclick="return confirm('Apakah Anda yakin ingin menghapus produk ini?')">
                                         <i class="bi bi-trash"></i>
                                     </a>
                                 </td>

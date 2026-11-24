@@ -6,42 +6,80 @@
     <title>Login Admin — RnZ Store</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;600;700&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
+        :root {
+            --rnz-forest: #223A2D;
+            --rnz-forest-hover: #192D23;
+            --rnz-terracotta: #C06B4E;
+            --rnz-terracotta-hover: #A85A3F;
+            --rnz-ivory: #F7F2E9;
+            --rnz-surface: #FCFAF6;
+            --rnz-ink: #1B1A17;
+            --rnz-muted: #5A564E;
+            --rnz-line: #E3DACB;
+        }
         body {
-            font-family: 'Plus Jakarta Sans', sans-serif;
-            background-color: #F8F9FA;
+            font-family: 'Manrope', -apple-system, BlinkMacSystemFont, sans-serif;
+            background-color: var(--rnz-ivory);
+            color: var(--rnz-ink);
             min-height: 100vh;
             display: flex;
             align-items: center;
             justify-content: center;
         }
         .login-card {
-            max-width: 420px;
+            max-width: 430px;
             width: 100%;
             background: #FFFFFF;
             border-radius: 16px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
-            border: 1px solid #E2E8F0;
+            box-shadow: 0 10px 30px rgba(34, 58, 45, 0.08);
+            border: 1px solid var(--rnz-line);
             overflow: hidden;
         }
         .login-header {
-            background-color: #800020; /* Burgundy */
+            background-color: var(--rnz-forest);
             color: #FFFFFF;
-            padding: 32px 24px;
+            padding: 36px 24px 30px 24px;
             text-align: center;
+            border-bottom: 2px solid var(--rnz-terracotta);
+        }
+        .login-header h4 {
+            font-family: 'Fraunces', serif;
+            letter-spacing: -0.02em;
+        }
+        .login-header i {
+            color: var(--rnz-terracotta);
+        }
+        .form-control {
+            border: 1px solid var(--rnz-line);
+            border-radius: 8px;
+            padding: 10px 14px;
+            color: var(--rnz-ink);
+        }
+        .form-control:focus {
+            border-color: var(--rnz-forest);
+            box-shadow: 0 0 0 3px rgba(34, 58, 45, 0.12);
+        }
+        .input-group-text {
+            background-color: var(--rnz-surface);
+            border: 1px solid var(--rnz-line);
+            color: var(--rnz-muted);
         }
         .btn-rnz {
-            background-color: #800020;
+            background-color: var(--rnz-forest);
             color: #FFFFFF;
-            border: none;
+            border: 1px solid var(--rnz-forest);
             padding: 12px;
             font-weight: 600;
             border-radius: 8px;
+            transition: all 0.2s ease;
         }
-        .btn-rnz:hover {
-            background-color: #630018;
+        .btn-rnz:hover, .btn-rnz:focus {
+            background-color: var(--rnz-forest-hover);
+            border-color: var(--rnz-forest-hover);
             color: #FFFFFF;
+            box-shadow: 0 4px 12px rgba(34, 58, 45, 0.25);
         }
     </style>
 </head>

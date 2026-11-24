@@ -13,41 +13,41 @@
     <div class="card-body p-2">
         <ul class="nav nav-pills flex-column flex-sm-row gap-1">
             <li class="nav-item">
-                <a class="nav-link <?= $statusTab === 'all' ? 'active bg-dark' : 'text-secondary' ?> py-2 px-3 small" href="/admin/orders?status=all">
-                    Semua <span class="badge bg-secondary-subtle text-secondary ms-1"><?= $counts['all'] ?></span>
+                <a class="nav-link <?= $statusTab === 'all' ? 'active' : '' ?> py-2 px-3 small" style="<?= $statusTab === 'all' ? 'background-color: var(--rnz-forest); color: #FFFFFF;' : 'color: var(--rnz-muted);' ?>" href="/admin/orders?status=all">
+                    Semua <span class="badge ms-1" style="<?= $statusTab === 'all' ? 'background-color: rgba(255,255,255,0.25); color: #FFFFFF;' : 'background-color: var(--rnz-line); color: var(--rnz-ink);' ?>"><?= $counts['all'] ?></span>
                 </a>
             </li>
             <li class="nav-item">
-                <a class="nav-link <?= $statusTab === 'verifying_payment' ? 'active bg-warning text-dark' : 'text-secondary' ?> py-2 px-3 small" href="/admin/orders?status=verifying_payment">
+                <a class="nav-link <?= $statusTab === 'verifying_payment' ? 'active' : '' ?> py-2 px-3 small" style="<?= $statusTab === 'verifying_payment' ? 'background-color: var(--rnz-warning); color: #FFFFFF;' : 'color: var(--rnz-muted);' ?>" href="/admin/orders?status=verifying_payment">
                     <i class="bi bi-hourglass-split me-1"></i> Perlu Verifikasi
                     <?php if ($counts['verifying_payment'] > 0): ?>
-                        <span class="badge bg-danger text-white ms-1"><?= $counts['verifying_payment'] ?></span>
+                        <span class="badge ms-1" style="background-color: var(--rnz-danger); color: #FFFFFF;"><?= $counts['verifying_payment'] ?></span>
                     <?php endif; ?>
                 </a>
             </li>
             <li class="nav-item">
-                <a class="nav-link <?= $statusTab === 'processing' ? 'active bg-primary' : 'text-secondary' ?> py-2 px-3 small" href="/admin/orders?status=processing">
-                    <i class="bi bi-box-seam me-1"></i> Diproses <span class="badge bg-light text-dark ms-1"><?= $counts['processing'] ?></span>
+                <a class="nav-link <?= $statusTab === 'processing' ? 'active' : '' ?> py-2 px-3 small" style="<?= $statusTab === 'processing' ? 'background-color: var(--rnz-info); color: #FFFFFF;' : 'color: var(--rnz-muted);' ?>" href="/admin/orders?status=processing">
+                    <i class="bi bi-box-seam me-1"></i> Diproses <span class="badge ms-1" style="<?= $statusTab === 'processing' ? 'background-color: rgba(255,255,255,0.25); color: #FFFFFF;' : 'background-color: var(--rnz-line); color: var(--rnz-ink);' ?>"><?= $counts['processing'] ?></span>
                 </a>
             </li>
             <li class="nav-item">
-                <a class="nav-link <?= $statusTab === 'shipped' ? 'active bg-info text-dark' : 'text-secondary' ?> py-2 px-3 small" href="/admin/orders?status=shipped">
-                    <i class="bi bi-truck me-1"></i> Dikirim <span class="badge bg-light text-dark ms-1"><?= $counts['shipped'] ?></span>
+                <a class="nav-link <?= $statusTab === 'shipped' ? 'active' : '' ?> py-2 px-3 small" style="<?= $statusTab === 'shipped' ? 'background-color: #553C7B; color: #FFFFFF;' : 'color: var(--rnz-muted);' ?>" href="/admin/orders?status=shipped">
+                    <i class="bi bi-truck me-1"></i> Dikirim <span class="badge ms-1" style="<?= $statusTab === 'shipped' ? 'background-color: rgba(255,255,255,0.25); color: #FFFFFF;' : 'background-color: var(--rnz-line); color: var(--rnz-ink);' ?>"><?= $counts['shipped'] ?></span>
                 </a>
             </li>
             <li class="nav-item">
-                <a class="nav-link <?= $statusTab === 'waiting_payment' ? 'active bg-secondary' : 'text-secondary' ?> py-2 px-3 small" href="/admin/orders?status=waiting_payment">
-                    Menunggu Bayar <span class="badge bg-light text-dark ms-1"><?= $counts['waiting_payment'] ?></span>
+                <a class="nav-link <?= $statusTab === 'waiting_payment' ? 'active' : '' ?> py-2 px-3 small" style="<?= $statusTab === 'waiting_payment' ? 'background-color: var(--rnz-muted); color: #FFFFFF;' : 'color: var(--rnz-muted);' ?>" href="/admin/orders?status=waiting_payment">
+                    Menunggu Bayar <span class="badge ms-1" style="<?= $statusTab === 'waiting_payment' ? 'background-color: rgba(255,255,255,0.25); color: #FFFFFF;' : 'background-color: var(--rnz-line); color: var(--rnz-ink);' ?>"><?= $counts['waiting_payment'] ?></span>
                 </a>
             </li>
             <li class="nav-item">
-                <a class="nav-link <?= $statusTab === 'completed' ? 'active bg-success' : 'text-secondary' ?> py-2 px-3 small" href="/admin/orders?status=completed">
-                    Selesai <span class="badge bg-light text-dark ms-1"><?= $counts['completed'] ?></span>
+                <a class="nav-link <?= $statusTab === 'completed' ? 'active' : '' ?> py-2 px-3 small" style="<?= $statusTab === 'completed' ? 'background-color: var(--rnz-success); color: #FFFFFF;' : 'color: var(--rnz-muted);' ?>" href="/admin/orders?status=completed">
+                    Selesai <span class="badge ms-1" style="<?= $statusTab === 'completed' ? 'background-color: rgba(255,255,255,0.25); color: #FFFFFF;' : 'background-color: var(--rnz-line); color: var(--rnz-ink);' ?>"><?= $counts['completed'] ?></span>
                 </a>
             </li>
             <li class="nav-item">
-                <a class="nav-link <?= $statusTab === 'cancelled' ? 'active bg-danger' : 'text-secondary' ?> py-2 px-3 small" href="/admin/orders?status=cancelled">
-                    Dibatalkan <span class="badge bg-light text-dark ms-1"><?= $counts['cancelled'] ?></span>
+                <a class="nav-link <?= $statusTab === 'cancelled' ? 'active' : '' ?> py-2 px-3 small" style="<?= $statusTab === 'cancelled' ? 'background-color: var(--rnz-danger); color: #FFFFFF;' : 'color: var(--rnz-muted);' ?>" href="/admin/orders?status=cancelled">
+                    Dibatalkan <span class="badge ms-1" style="<?= $statusTab === 'cancelled' ? 'background-color: rgba(255,255,255,0.25); color: #FFFFFF;' : 'background-color: var(--rnz-line); color: var(--rnz-ink);' ?>"><?= $counts['cancelled'] ?></span>
                 </a>
             </li>
         </ul>
@@ -66,7 +66,7 @@
                 </div>
             </div>
             <div class="col-12 col-md-3 d-flex gap-2">
-                <button type="submit" class="btn btn-secondary w-100">Cari</button>
+                <button type="submit" class="btn btn-rnz w-100">Cari</button>
                 <?php if (!empty($keyword)): ?>
                     <a href="/admin/orders?status=<?= esc($statusTab) ?>" class="btn btn-outline-secondary">Reset</a>
                 <?php endif; ?>

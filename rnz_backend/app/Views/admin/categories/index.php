@@ -3,7 +3,7 @@
 <?= $this->section('content') ?>
 <div class="d-flex justify-content-between align-items-center mb-4">
     <div>
-        <h5 class="fw-bold mb-1">Kategori Produk</h5>
+        <h5 class="fw-bold font-serif mb-1">Kategori Produk</h5>
         <p class="text-muted small mb-0">Kelola kelompok produk hijab, busana, dan aksesori.</p>
     </div>
     <button class="btn btn-rnz" data-bs-toggle="modal" data-bs-target="#modalAddCategory">
@@ -41,16 +41,16 @@
                                 </td>
                                 <td>
                                     <?php if ($cat['is_active']): ?>
-                                        <span class="badge bg-success-subtle text-success px-2 py-1">Aktif</span>
+                                        <span class="badge badge-completed px-2 py-1 rounded-pill">Aktif</span>
                                     <?php else: ?>
-                                        <span class="badge bg-secondary-subtle text-secondary px-2 py-1">Nonaktif</span>
+                                        <span class="badge badge-waiting px-2 py-1 rounded-pill">Nonaktif</span>
                                     <?php endif; ?>
                                 </td>
                                 <td class="text-end pe-3">
-                                    <button class="btn btn-sm btn-outline-secondary me-1" data-bs-toggle="modal" data-bs-target="#modalEditCategory<?= $cat['id'] ?>">
+                                    <button class="btn btn-sm btn-outline-rnz me-1 py-1 px-2" data-bs-toggle="modal" data-bs-target="#modalEditCategory<?= $cat['id'] ?>">
                                         <i class="bi bi-pencil"></i>
                                     </button>
-                                    <a href="/admin/categories/delete/<?= $cat['id'] ?>" class="btn btn-sm btn-outline-danger" onclick="return confirm('Apakah Anda yakin ingin menghapus kategori ini?')">
+                                    <a href="/admin/categories/delete/<?= $cat['id'] ?>" class="btn btn-sm btn-outline-terracotta py-1 px-2" onclick="return confirm('Apakah Anda yakin ingin menghapus kategori ini?')">
                                         <i class="bi bi-trash"></i>
                                     </a>
                                 </td>

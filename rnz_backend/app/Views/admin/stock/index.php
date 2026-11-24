@@ -3,7 +3,7 @@
 <?= $this->section('content') ?>
 <div class="d-flex flex-wrap justify-content-between align-items-center gap-3 mb-4">
     <div>
-        <h5 class="fw-bold mb-1">Stok & Stock Opname</h5>
+        <h5 class="fw-bold font-serif mb-1">Stok & Stock Opname</h5>
         <p class="text-muted small mb-0">Pantau ketersediaan stok fisik per varian dan lakukan penyesuaian (opname) stok.</p>
     </div>
 </div>
@@ -13,7 +13,7 @@
     <div class="col-12 col-xl-7">
         <div class="card border-0 shadow-sm rounded-3">
             <div class="card-header bg-white py-3 border-bottom">
-                <h6 class="mb-0 fw-bold"><i class="bi bi-boxes me-2"></i>Daftar Stok Produk Hijab</h6>
+                <h6 class="mb-0 fw-bold font-serif"><i class="bi bi-boxes me-2" style="color: var(--rnz-terracotta);"></i>Daftar Stok Produk Hijab</h6>
             </div>
             <div class="card-body p-0">
                 <div class="table-responsive">
@@ -41,15 +41,15 @@
                                         <td><span class="badge bg-light text-dark border"><?= esc($v['category_name']) ?></span></td>
                                         <td class="text-center">
                                             <?php if ($v['stock'] <= 0): ?>
-                                                <span class="badge bg-danger rounded-pill px-2">Habis</span>
+                                                <span class="badge badge-cancelled rounded-pill px-2">Habis</span>
                                             <?php elseif ($v['stock'] <= 3): ?>
-                                                <span class="badge bg-warning text-dark rounded-pill px-2"><?= $v['stock'] ?></span>
+                                                <span class="badge badge-verifying rounded-pill px-2"><?= $v['stock'] ?></span>
                                             <?php else: ?>
-                                                <span class="badge bg-success-subtle text-success rounded-pill px-2"><?= $v['stock'] ?></span>
+                                                <span class="badge badge-completed rounded-pill px-2"><?= $v['stock'] ?></span>
                                             <?php endif; ?>
                                         </td>
                                         <td class="text-end pe-3">
-                                            <button class="btn btn-sm btn-outline-primary" data-bs-toggle="modal" data-bs-target="#modalOpname<?= $v['id'] ?>">
+                                            <button class="btn btn-sm btn-outline-rnz py-1 px-2" data-bs-toggle="modal" data-bs-target="#modalOpname<?= $v['id'] ?>">
                                                 <i class="bi bi-pencil-square me-1"></i> Sesuaikan
                                             </button>
                                         </td>

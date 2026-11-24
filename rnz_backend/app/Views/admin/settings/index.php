@@ -2,7 +2,7 @@
 
 <?= $this->section('content') ?>
 <div class="mb-4">
-    <h5 class="fw-bold mb-1">Pengaturan Toko</h5>
+    <h5 class="fw-bold font-serif mb-1">Pengaturan Toko</h5>
     <p class="text-muted small mb-0">Kelola nomor rekening pembayaran (Bank & E-Wallet) dan tarif flat ongkos kirim wilayah.</p>
 </div>
 
@@ -11,7 +11,7 @@
     <div class="col-12 col-xl-6">
         <div class="card border-0 shadow-sm rounded-3">
             <div class="card-header bg-white py-3 d-flex justify-content-between align-items-center border-bottom">
-                <h6 class="mb-0 fw-bold"><i class="bi bi-wallet2 me-2"></i>Rekening Pembayaran & E-Wallet</h6>
+                <h6 class="mb-0 fw-bold font-serif"><i class="bi bi-wallet2 me-2" style="color: var(--rnz-terracotta);"></i>Rekening Pembayaran & E-Wallet</h6>
                 <button class="btn btn-sm btn-rnz" data-bs-toggle="modal" data-bs-target="#modalAddPayment">
                     <i class="bi bi-plus-lg me-1"></i> Tambah
                 </button>
@@ -44,16 +44,16 @@
                                         <td class="small"><?= esc($p['account_name']) ?></td>
                                         <td>
                                             <?php if ($p['is_active']): ?>
-                                                <span class="badge bg-success-subtle text-success small">Aktif</span>
+                                                <span class="badge badge-completed small rounded-pill px-2">Aktif</span>
                                             <?php else: ?>
-                                                <span class="badge bg-secondary-subtle text-secondary small">Nonaktif</span>
+                                                <span class="badge badge-waiting small rounded-pill px-2">Nonaktif</span>
                                             <?php endif; ?>
                                         </td>
                                         <td class="text-end pe-3">
-                                            <button class="btn btn-sm btn-outline-secondary me-1 py-0 px-2" data-bs-toggle="modal" data-bs-target="#modalEditPay<?= $p['id'] ?>">
+                                            <button class="btn btn-sm btn-outline-rnz me-1 py-1 px-2" data-bs-toggle="modal" data-bs-target="#modalEditPay<?= $p['id'] ?>">
                                                 <i class="bi bi-pencil"></i>
                                             </button>
-                                            <a href="/admin/settings/payment-method/delete/<?= $p['id'] ?>" class="btn btn-sm btn-outline-danger py-0 px-2" onclick="return confirm('Hapus metode pembayaran ini?')">
+                                            <a href="/admin/settings/payment-method/delete/<?= $p['id'] ?>" class="btn btn-sm btn-outline-terracotta py-1 px-2" onclick="return confirm('Hapus metode pembayaran ini?')">
                                                 <i class="bi bi-trash"></i>
                                             </a>
                                         </td>
@@ -115,7 +115,7 @@
     <div class="col-12 col-xl-6">
         <div class="card border-0 shadow-sm rounded-3">
             <div class="card-header bg-white py-3 d-flex justify-content-between align-items-center border-bottom">
-                <h6 class="mb-0 fw-bold"><i class="bi bi-truck me-2"></i>Tarif Ongkir Wilayah</h6>
+                <h6 class="mb-0 fw-bold font-serif"><i class="bi bi-truck me-2" style="color: var(--rnz-terracotta);"></i>Tarif Ongkir Wilayah</h6>
                 <button class="btn btn-sm btn-rnz" data-bs-toggle="modal" data-bs-target="#modalAddShipping">
                     <i class="bi bi-plus-lg me-1"></i> Tambah
                 </button>
@@ -140,19 +140,19 @@
                                 <?php foreach ($shippingRates as $s): ?>
                                     <tr>
                                         <td class="ps-3 fw-semibold text-dark"><?= esc($s['region_name']) ?></td>
-                                        <td class="fw-bold">Rp <?= number_format($s['cost'], 0, ',', '.') ?></td>
+                                        <td class="fw-bold" style="color: var(--rnz-forest);">Rp <?= number_format($s['cost'], 0, ',', '.') ?></td>
                                         <td>
                                             <?php if ($s['is_active']): ?>
-                                                <span class="badge bg-success-subtle text-success small">Aktif</span>
+                                                <span class="badge badge-completed small rounded-pill px-2">Aktif</span>
                                             <?php else: ?>
-                                                <span class="badge bg-secondary-subtle text-secondary small">Nonaktif</span>
+                                                <span class="badge badge-waiting small rounded-pill px-2">Nonaktif</span>
                                             <?php endif; ?>
                                         </td>
                                         <td class="text-end pe-3">
-                                            <button class="btn btn-sm btn-outline-secondary me-1 py-0 px-2" data-bs-toggle="modal" data-bs-target="#modalEditShip<?= $s['id'] ?>">
+                                            <button class="btn btn-sm btn-outline-rnz me-1 py-1 px-2" data-bs-toggle="modal" data-bs-target="#modalEditShip<?= $s['id'] ?>">
                                                 <i class="bi bi-pencil"></i>
                                             </button>
-                                            <a href="/admin/settings/shipping-rate/delete/<?= $s['id'] ?>" class="btn btn-sm btn-outline-danger py-0 px-2" onclick="return confirm('Hapus tarif ongkir ini?')">
+                                            <a href="/admin/settings/shipping-rate/delete/<?= $s['id'] ?>" class="btn btn-sm btn-outline-terracotta py-1 px-2" onclick="return confirm('Hapus tarif ongkir ini?')">
                                                 <i class="bi bi-trash"></i>
                                             </a>
                                         </td>

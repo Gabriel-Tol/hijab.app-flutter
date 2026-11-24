@@ -12,19 +12,20 @@
         }
         .header {
             text-align: center;
-            border-bottom: 2px solid #800020;
+            border-bottom: 2px solid #223A2D;
             padding-bottom: 12px;
             margin-bottom: 20px;
         }
         .header h2 {
             margin: 0;
-            color: #800020;
+            color: #223A2D;
             font-size: 18px;
             text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
         .header p {
             margin: 4px 0 0 0;
-            color: #666666;
+            color: #5A564E;
             font-size: 10px;
         }
         .meta-info {
@@ -36,11 +37,12 @@
         .meta-info td {
             font-size: 11px;
             padding: 2px 0;
+            color: #1B1A17;
         }
         .summary-box {
-            background-color: #f8f9fa;
-            border: 1px solid #e2e8f0;
-            padding: 10px 14px;
+            background-color: #F7F2E9;
+            border: 1px solid #E3DACB;
+            padding: 12px 16px;
             margin-bottom: 18px;
         }
         .summary-box table {
@@ -51,13 +53,14 @@
         }
         .summary-title {
             font-size: 10px;
-            color: #718096;
+            color: #5A564E;
             text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
         .summary-value {
-            font-size: 14px;
+            font-size: 15px;
             font-weight: bold;
-            color: #1a202c;
+            color: #223A2D;
         }
         table.data-table {
             width: 100%;
@@ -65,7 +68,7 @@
             margin-bottom: 20px;
         }
         table.data-table th {
-            background-color: #800020;
+            background-color: #223A2D;
             color: #ffffff;
             font-weight: bold;
             text-align: left;
@@ -73,12 +76,13 @@
             font-size: 10px;
         }
         table.data-table td {
-            border-bottom: 1px solid #e2e8f0;
+            border-bottom: 1px solid #E3DACB;
             padding: 6px 8px;
             font-size: 10px;
+            color: #1B1A17;
         }
         table.data-table tr:nth-child(even) {
-            background-color: #fcfcfc;
+            background-color: #FCFAF6;
         }
         .text-center {
             text-align: center;
@@ -88,10 +92,10 @@
         }
         .footer {
             margin-top: 30px;
-            border-top: 1px solid #e2e8f0;
+            border-top: 1px solid #E3DACB;
             padding-top: 8px;
             font-size: 9px;
-            color: #a0aec0;
+            color: #8E9F94;
             text-align: right;
         }
     </style>
@@ -116,7 +120,7 @@
             <tr>
                 <td style="width: 50%;">
                     <div class="summary-title">Total Omzet Penjualan</div>
-                    <div class="summary-value" style="color: #2b6cb0;">Rp <?= number_format($totalRevenue, 0, ',', '.') ?></div>
+                    <div class="summary-value" style="color: #C06B4E;">Rp <?= number_format($totalRevenue, 0, ',', '.') ?></div>
                 </td>
                 <td style="width: 50%;" class="text-right">
                     <div class="summary-title">Jumlah Transaksi Berhasil</div>
