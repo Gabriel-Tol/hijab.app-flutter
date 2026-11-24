@@ -71,7 +71,7 @@
                         <div class="d-flex gap-2">
                             <form action="/admin/orders/<?= $order['id'] ?>/approve" method="POST" class="flex-fill">
                                 <?= csrf_field() ?>
-                                <button type="submit" class="btn btn-rnz w-100 py-2 fw-semibold" onclick="return confirm('Setujui bukti pembayaran pesanan ini?')">
+                                <button type="submit" class="btn btn-rnz w-100 py-2 fw-semibold" onclick="return rnzConfirm('Setujui bukti pembayaran pesanan ini?')">
                                     <i class="bi bi-check-circle me-1"></i> Setujui Pembayaran
                                 </button>
                             </form>

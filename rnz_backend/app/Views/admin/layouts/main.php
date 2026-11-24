@@ -453,10 +453,95 @@
 
     <!-- Bootstrap 5 JS Bundle -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- SweetAlert2 for interactive alerts -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
         function toggleSidebar() {
             document.querySelector('.sidebar').classList.toggle('show');
         }
+
+        // RNZ Store SweetAlert confirmation - replaces window.confirm()
+        // Usage: onclick="return rnzConfirm('Pesan konfirmasi')"
+        function rnzConfirm(message) {
+            return Swal.fire({
+                title: 'Konfirmasi?',
+                text: message,
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: 'var(--rnz-terracotta)',
+                cancelButtonColor: 'var(--rnz-muted)',
+                confirmButtonText: 'Ya, lanjutkan',
+                cancelButtonText: 'Batal',
+                customClass: {
+                    popup: 'swal-rnz',
+                    title: 'font-serif',
+                    confirmButton: 'swal-confirm',
+                    cancelButton: 'swal-cancel'
+                }
+            }).then((result) => result.isConfirmed);
+        }
+
+        // RNZ Store success toast - shows a brief success notification
+        // Usage: rnzToast('Pesan berhasil!'); or rnzToast('Pesan berhasil!', 'success');
+        function rnzToast(message, type = 'success') {
+            Swal.fire({
+                toast: true,
+                position: 'top-end',
+                showConfirmButton: false,
+                timer: 3000,
+                timerProgressBar: true,
+                icon: type,
+                title: message,
+                customClass: {
+                    popup: 'swal-rnz-toast',
+                    title: 'font-serif'
+                }
+            });
+        }
+
+        // Custom CSS for SweetAlert2 (matches RnZ brand)
+        const rnzSweetAlertStyle = document.createElement('style');
+        rnzSweetAlertStyle.textContent = \`
+            .swal-rnz {
+                border-radius: 12px !important;
+                background: var(--rnz-surface) !important;
+            }
+            .swal-rnz .swal-icon {
+                color: var(--rnz-warning) !important;
+            }
+            .swal-rnz .swal-icon.swal-icon-warning::before {
+                color: var(--rnz-warning) !important;
+            }
+            .swal-rnz .swal-title {
+                color: var(--rnz-ink) !important;
+                font-family: 'Fraunces', serif !important;
+                font-weight: 600 !important;
+                margin-bottom: 12px !important;
+            }
+            .swal-rnz .swal-text {
+                color: var(--rnz-ink) !important;
+                font-family: 'Manrope', sans-serif !important;
+                font-size: 14px !important;
+            }
+            .swal-rnz .swal-confirm-btn {
+                font-family: 'Manrope', sans-serif !important;
+                font-weight: 600 !important;
+            }
+            .swal-rnz .swal-cancel-btn {
+                font-family: 'Manrope', sans-serif !important;
+            }
+        \`;
+        document.head.appendChild(rnzSweetAlertStyle);
+
+        // Check for flash messages and display them
+        (function() {
+            <?php if (session()->has('success')): ?>
+                rnzToast('<?= esc(session()->get('success')) ?>', 'success');
+            <?php endif; ?>
+            <?php if (session()->has('error')): ?>
+                rnzToast('<?= esc(session()->get('error')) ?>', 'error');
+            <?php endif; ?>
+        })();
     </script>
 </body>
 </html>

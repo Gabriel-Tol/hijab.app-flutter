@@ -8,7 +8,7 @@
 
 <div class="row g-4">
     <!-- 1. Rekening Pembayaran -->
-    <div class="col-12 col-xl-6">
+    <div class="col-12">
         <div class="card border-0 shadow-sm rounded-3">
             <div class="card-header bg-white py-3 d-flex justify-content-between align-items-center border-bottom">
                 <h6 class="mb-0 fw-bold font-serif"><i class="bi bi-wallet2 me-2" style="color: var(--rnz-terracotta);"></i>Rekening Pembayaran & E-Wallet</h6>
@@ -50,15 +50,17 @@
                                             <?php endif; ?>
                                         </td>
                                         <td class="text-end pe-3">
-                                            <button class="btn btn-sm btn-outline-rnz me-1 py-1 px-2" data-bs-toggle="modal" data-bs-target="#modalEditPay<?= $p['id'] ?>">
-                                                <i class="bi bi-pencil"></i>
-                                            </button>
-                                            <form action="/admin/settings/payment-method/delete/<?= $p['id'] ?>" method="POST" class="d-inline" onsubmit="return confirm('Hapus metode pembayaran ini?')">
-                                                <?= csrf_field() ?>
-                                                <button type="submit" class="btn btn-sm btn-outline-terracotta py-1 px-2" title="Hapus">
-                                                    <i class="bi bi-trash"></i>
+                                            <div class="d-flex justify-content-end align-items-center flex-nowrap gap-1">
+                                                <button class="btn btn-sm btn-outline-rnz py-1 px-2" data-bs-toggle="modal" data-bs-target="#modalEditPay<?= $p['id'] ?>">
+                                                    <i class="bi bi-pencil"></i>
                                                 </button>
-                                            </form>
+                                                <form action="/admin/settings/payment-method/delete/<?= $p['id'] ?>" method="POST" class="d-inline m-0" onsubmit="return rnzConfirm('Hapus metode pembayaran ini?')">
+                                                    <?= csrf_field() ?>
+                                                    <button type="submit" class="btn btn-sm btn-outline-terracotta py-1 px-2" title="Hapus">
+                                                        <i class="bi bi-trash"></i>
+                                                    </button>
+                                                </form>
+                                            </div>
                                         </td>
                                     </tr>
 
@@ -115,7 +117,7 @@
     </div>
 
     <!-- 2. Tarif Ongkos Kirim -->
-    <div class="col-12 col-xl-6">
+    <div class="col-12">
         <div class="card border-0 shadow-sm rounded-3">
             <div class="card-header bg-white py-3 d-flex justify-content-between align-items-center border-bottom">
                 <h6 class="mb-0 fw-bold font-serif"><i class="bi bi-truck me-2" style="color: var(--rnz-terracotta);"></i>Tarif Ongkir Wilayah</h6>
@@ -152,15 +154,17 @@
                                             <?php endif; ?>
                                         </td>
                                         <td class="text-end pe-3">
-                                            <button class="btn btn-sm btn-outline-rnz me-1 py-1 px-2" data-bs-toggle="modal" data-bs-target="#modalEditShip<?= $s['id'] ?>">
-                                                <i class="bi bi-pencil"></i>
-                                            </button>
-                                            <form action="/admin/settings/shipping-rate/delete/<?= $s['id'] ?>" method="POST" class="d-inline" onsubmit="return confirm('Hapus tarif ongkir ini?')">
-                                                <?= csrf_field() ?>
-                                                <button type="submit" class="btn btn-sm btn-outline-terracotta py-1 px-2" title="Hapus">
-                                                    <i class="bi bi-trash"></i>
+                                            <div class="d-flex justify-content-end align-items-center flex-nowrap gap-1">
+                                                <button class="btn btn-sm btn-outline-rnz py-1 px-2" data-bs-toggle="modal" data-bs-target="#modalEditShip<?= $s['id'] ?>">
+                                                    <i class="bi bi-pencil"></i>
                                                 </button>
-                                            </form>
+                                                <form action="/admin/settings/shipping-rate/delete/<?= $s['id'] ?>" method="POST" class="d-inline m-0" onsubmit="return rnzConfirm('Hapus tarif ongkir ini?')">
+                                                    <?= csrf_field() ?>
+                                                    <button type="submit" class="btn btn-sm btn-outline-terracotta py-1 px-2" title="Hapus">
+                                                        <i class="bi bi-trash"></i>
+                                                    </button>
+                                                </form>
+                                            </div>
                                         </td>
                                     </tr>
 
