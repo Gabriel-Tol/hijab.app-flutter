@@ -38,9 +38,16 @@ class OrderController extends BaseApiController
             return $this->respondWithError('Otentikasi diperlukan.', 401);
         }
 
-        $items         = $this->request->getVar('items');
-        $address       = $this->request->getVar('address');
-        $paymentMethod = $this->request->getVar('payment_method');
+        $json = $this->request->getJSON(true);
+        if (is_array($json) && !empty($json)) {
+            $items         = $json['items'] ?? null;
+            $address       = $json['address'] ?? null;
+            $paymentMethod = $json['payment_method'] ?? null;
+        } else {
+            $items         = $this->request->getVar('items');
+            $address       = $this->request->getVar('address');
+            $paymentMethod = $this->request->getVar('payment_method');
+        }
 
         if (empty($items) || !is_array($items)) {
             return $this->respondWithError('Item belanja tidak boleh kosong.', 422);
