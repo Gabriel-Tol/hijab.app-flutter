@@ -56,6 +56,11 @@ class CatalogController extends ChangeNotifier {
     notifyListeners();
 
     try {
+      // Refresh from API first to stay in sync with admin
+      // Falls back to local store on failure
+      await _catalog.fetchCategories();
+      await _catalog.fetchProducts();
+
       final result = _catalog.search(
         query: query,
         categoryId: categoryId,

@@ -1,10 +1,12 @@
+import '../api_client.dart';
 import '../local_store.dart';
 import '../models/catalog.dart';
 
 class CatalogRepository {
-  CatalogRepository(this._store);
+  CatalogRepository(this._store, {ApiClient? apiClient}) : _apiClient = apiClient;
 
   final LocalStore _store;
+  final ApiClient? _apiClient;
 
   List<Category> categories({bool activeOnly = true}) {
     final items = _store
@@ -15,6 +17,32 @@ class CatalogRepository {
     return items
         .where((category) => category.isActive)
         .toList(growable: false);
+  }
+
+  /// Fetch categories from API with fallback to local store
+  Future<List<Category>> fetchCategories() async {
+    final localCategories = categories(activeOnly: false);
+    if (_apiClient == null) return localCategories;
+
+    final result = await _apiClient!.fetchCategories();
+    if (result.isOk && result.value != null) {
+      final categories = result.value!
+          .map((raw) => Category.fromJson(Map<String, dynamic>.from(raw as Map)))
+          .toList();
+
+      // Update local store with fresh data
+      await _store.write('categories', result.value!);
+      return categories;
+    }
+
+    return localCategories;
+  }
+
+  Future<List<Category>> allCategories() async {
+    if (_apiClient != null) {
+      return fetchCategories();
+    }
+    return categories(activeOnly: false);
   }
 
   List<Product> allActive() {
@@ -29,6 +57,30 @@ class CatalogRepository {
               activeCategoryIds.contains(product.categoryId),
         )
         .toList(growable: false);
+  }
+
+  /// Fetch all products from API with fallback to local store
+  Future<List<Product>> fetchProducts({int page = 1, int perPage = 100}) async {
+    final localProducts = _store
+        .list('products')
+        .map((raw) => Product.fromJson(Map<String, dynamic>.from(raw as Map)))
+        .where((p) => p.isActive && p.deletedAt == null)
+        .toList();
+
+    if (_apiClient == null) return localProducts;
+
+    final result = await _apiClient!.fetchProducts(page: page, perPage: perPage);
+    if (result.isOk && result.value != null) {
+      final products = result.value!
+          .map((raw) => Product.fromJson(Map<String, dynamic>.from(raw as Map)))
+          .toList();
+
+      // Update local store with fresh data
+      await _store.write('products', result.value!);
+      return products.where((p) => p.isActive && p.deletedAt == null).toList();
+    }
+
+    return localProducts;
   }
 
   PagedProducts search({
