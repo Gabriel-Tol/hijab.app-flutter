@@ -6,6 +6,7 @@
 | **Tanggal** | 24 November 2026 |
 | **Sumber Requirement** | `PRD_RnZ_Store_Flutter.md` (Epic F: US-23 s.d US-35, Bagian 4.1, 4.2, 4.4, 4.5) |
 | **Teknologi Backend & Admin** | PHP 8.1+, CodeIgniter 4, MySQL 8 / MariaDB (Laragon), Bootstrap 5, DomPDF |
+| **Strategi Online Gratis** | Cloudflare Tunnel / Ngrok (Domain HTTPS publik gratis dari Laragon lokal) |
 | **Klien / Target Pengguna** | Pemilik Toko RnZ Store (Rafly Ikhsanida) |
 | **Integrasi Klien** | Aplikasi Mobile Pelanggan (Flutter) via REST API `/api/v1` (JWT Bearer Token) |
 
@@ -77,6 +78,14 @@ Dokumen ini mendefinisikan rancangan arsitektur, basis data, dan antarmuka web u
         └─────────────────┘       │ - /uploads/proofs/    │
                                   └───────────────────────┘
 ```
+
+### 2.1 Akses Online Publik Gratis (Cloudflare Tunnel / Ngrok)
+- **Topologi Akses Online:**
+  Laragon (localhost:8080) $\rightarrow$ Cloudflare Tunnel / Ngrok agent $\rightarrow$ Domain Publik HTTPS aman (misal: `https://rnz-store.trycloudflare.com`).
+- **Keuntungan:**
+  1. 100% gratis tanpa biaya bulanan maupun kartu kredit.
+  2. Otomatis menyediakan sertifikat SSL/HTTPS yang valid (syarat mutlak Android/iOS untuk komunikasi API).
+  3. Web admin dapat diakses langsung oleh penguji/dosen melalui internet, dan aplikasi Flutter di HP mahasiswa/pelanggan dapat bertransaksi langsung secara online melalui jaringan seluler.
 
 ### Struktur Folder Rekomendasi
 Aplikasi web backend akan ditempatkan pada folder terpisah di samping folder aplikasi Flutter:
