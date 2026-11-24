@@ -41,7 +41,6 @@ class OrderController extends BaseApiController
         $items         = $this->request->getVar('items');
         $address       = $this->request->getVar('address');
         $paymentMethod = $this->request->getVar('payment_method');
-        $shippingCost  = (int)($this->request->getVar('shipping_cost') ?? 0);
 
         if (empty($items) || !is_array($items)) {
             return $this->respondWithError('Item belanja tidak boleh kosong.', 422);
@@ -56,12 +55,12 @@ class OrderController extends BaseApiController
         }
 
         try {
+            // Biaya ongkir dihitung secara otoritatif di OrderService dari database shipping_rates
             $order = $this->orderService->createOrder(
                 (int)$user->sub,
                 $items,
                 $address,
-                $paymentMethod,
-                $shippingCost
+                $paymentMethod
             );
 
             // Ambil rincian item pesanan

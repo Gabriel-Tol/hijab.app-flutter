@@ -105,9 +105,12 @@
                                     <a href="/admin/products/edit/<?= $prod['id'] ?>" class="btn btn-sm btn-outline-rnz me-1 py-1 px-2" title="Ubah">
                                         <i class="bi bi-pencil"></i>
                                     </a>
-                                    <a href="/admin/products/delete/<?= $prod['id'] ?>" class="btn btn-sm btn-outline-terracotta py-1 px-2" title="Hapus" onclick="return confirm('Apakah Anda yakin ingin menghapus produk ini?')">
-                                        <i class="bi bi-trash"></i>
-                                    </a>
+                                    <form action="/admin/products/delete/<?= $prod['id'] ?>" method="POST" class="d-inline" onsubmit="return confirm('Apakah Anda yakin ingin menghapus produk ini?')">
+                                        <?= csrf_field() ?>
+                                        <button type="submit" class="btn btn-sm btn-outline-terracotta py-1 px-2" title="Hapus">
+                                            <i class="bi bi-trash"></i>
+                                        </button>
+                                    </form>
                                 </td>
                             </tr>
                         <?php endforeach; ?>

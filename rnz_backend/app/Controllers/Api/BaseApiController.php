@@ -32,7 +32,10 @@ class BaseApiController extends BaseController
 
     protected function generateToken(array $user): string
     {
-        $secret = env('JWT_SECRET', 'rnz_store_secret_jwt_key_2026_super_secure_key_for_pontianak_hijab');
+        $secret = env('JWT_SECRET');
+        if (empty($secret)) {
+            throw new \RuntimeException('Konfigurasi keamanan server (JWT_SECRET) belum disetel di .env');
+        }
         $now = time();
         $payload = [
             'iss'   => 'rnz_store_backend',

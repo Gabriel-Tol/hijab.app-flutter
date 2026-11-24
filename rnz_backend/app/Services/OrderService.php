@@ -47,6 +47,57 @@ class OrderService
     }
 
     /**
+     * Hitung tarif ongkir resmi berdasarkan tabel shipping_rates di database
+     */
+    public function calculateShippingCost(array $addressData): int
+    {
+        $shippingRateId = $addressData['shipping_rate_id'] ?? null;
+        if (!empty($shippingRateId)) {
+            $rate = $this->db->table('shipping_rates')
+                ->where('id', (int)$shippingRateId)
+                ->where('is_active', 1)
+                ->get()->getRowArray();
+            if ($rate) {
+                return (int)$rate['cost'];
+            }
+        }
+
+        $city = trim($addressData['city'] ?? '');
+        if (!empty($city)) {
+            // Pencarian nama wilayah persis (case-insensitive)
+            $rate = $this->db->table('shipping_rates')
+                ->where('is_active', 1)
+                ->where('LOWER(region_name)', strtolower($city))
+                ->get()->getRowArray();
+
+            if (!$rate) {
+                // Pencarian kemiripan nama kota (misal "Kota Pontianak" cocok dengan "Kota Pontianak (Flat)")
+                $cleanCity = trim(preg_replace('/^(kota|kabupaten|kab\.)\s+/i', '', $city));
+                $rate = $this->db->table('shipping_rates')
+                    ->where('is_active', 1)
+                    ->groupStart()
+                        ->like('region_name', $city)
+                        ->orLike('region_name', $cleanCity)
+                    ->groupEnd()
+                    ->orderBy('cost', 'ASC')
+                    ->get()->getRowArray();
+            }
+
+            if ($rate) {
+                return (int)$rate['cost'];
+            }
+        }
+
+        // Default flat fallback jika wilayah belum terdaftar spesifik
+        $defaultRate = $this->db->table('shipping_rates')
+            ->where('is_active', 1)
+            ->orderBy('cost', 'ASC')
+            ->get()->getRowArray();
+
+        return $defaultRate ? (int)$defaultRate['cost'] : 15000;
+    }
+
+    /**
      * Atomic checkout with row-locking
      */
     public function createOrder(
@@ -54,10 +105,15 @@ class OrderService
         array $items,
         array $addressData,
         array $paymentMethodData,
-        int $shippingCost = 0
+        ?int $shippingCost = null
     ): array {
         if (empty($items)) {
             throw new Exception('Item pesanan tidak boleh kosong.');
+        }
+
+        // Hitung biaya ongkir server-side secara otoritatif jika tidak dispesifikasikan oleh sistem internal
+        if ($shippingCost === null || $shippingCost <= 0) {
+            $shippingCost = $this->calculateShippingCost($addressData);
         }
 
         $this->db->transBegin();

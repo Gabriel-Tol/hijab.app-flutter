@@ -24,7 +24,15 @@ class JwtAuthFilter implements FilterInterface
         }
 
         $token = $matches[1];
-        $jwtSecret = env('JWT_SECRET', 'rnz_store_secret_jwt_key_2026_super_secure_key_for_pontianak_hijab');
+        $jwtSecret = env('JWT_SECRET');
+
+        if (empty($jwtSecret)) {
+            $response = service('response');
+            return $response->setStatusCode(500)->setJSON([
+                'success' => false,
+                'message' => 'Konfigurasi keamanan server (JWT_SECRET) belum disetel.',
+            ]);
+        }
 
         try {
             $decoded = JWT::decode($token, new Key($jwtSecret, 'HS256'));

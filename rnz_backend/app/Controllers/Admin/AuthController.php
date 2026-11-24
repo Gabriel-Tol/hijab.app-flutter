@@ -25,6 +25,12 @@ class AuthController extends BaseController
 
     public function processLogin()
     {
+        $throttler = service('throttler');
+        $throttleKey = md5($this->request->getIPAddress() . '_admin_login');
+        if ($throttler->check($throttleKey, 5, MINUTE) === false) {
+            return redirect()->back()->withInput()->with('error', 'Terlalu banyak percobaan login. Silakan tunggu 1 menit sebelum mencoba kembali.');
+        }
+
         $rules = [
             'email'    => 'required|valid_email',
             'password' => 'required|min_length[6]',

@@ -55,6 +55,12 @@ class AuthController extends BaseApiController
 
     public function login()
     {
+        $throttler = service('throttler');
+        $throttleKey = md5($this->request->getIPAddress() . '_api_login');
+        if ($throttler->check($throttleKey, 5, MINUTE) === false) {
+            return $this->respondWithError('Terlalu banyak percobaan login. Silakan tunggu 1 menit sebelum mencoba lagi.', 429);
+        }
+
         $rules = [
             'email'    => 'required|valid_email',
             'password' => 'required',

@@ -53,9 +53,12 @@
                                             <button class="btn btn-sm btn-outline-rnz me-1 py-1 px-2" data-bs-toggle="modal" data-bs-target="#modalEditPay<?= $p['id'] ?>">
                                                 <i class="bi bi-pencil"></i>
                                             </button>
-                                            <a href="/admin/settings/payment-method/delete/<?= $p['id'] ?>" class="btn btn-sm btn-outline-terracotta py-1 px-2" onclick="return confirm('Hapus metode pembayaran ini?')">
-                                                <i class="bi bi-trash"></i>
-                                            </a>
+                                            <form action="/admin/settings/payment-method/delete/<?= $p['id'] ?>" method="POST" class="d-inline" onsubmit="return confirm('Hapus metode pembayaran ini?')">
+                                                <?= csrf_field() ?>
+                                                <button type="submit" class="btn btn-sm btn-outline-terracotta py-1 px-2" title="Hapus">
+                                                    <i class="bi bi-trash"></i>
+                                                </button>
+                                            </form>
                                         </td>
                                     </tr>
 
@@ -152,9 +155,12 @@
                                             <button class="btn btn-sm btn-outline-rnz me-1 py-1 px-2" data-bs-toggle="modal" data-bs-target="#modalEditShip<?= $s['id'] ?>">
                                                 <i class="bi bi-pencil"></i>
                                             </button>
-                                            <a href="/admin/settings/shipping-rate/delete/<?= $s['id'] ?>" class="btn btn-sm btn-outline-terracotta py-1 px-2" onclick="return confirm('Hapus tarif ongkir ini?')">
-                                                <i class="bi bi-trash"></i>
-                                            </a>
+                                            <form action="/admin/settings/shipping-rate/delete/<?= $s['id'] ?>" method="POST" class="d-inline" onsubmit="return confirm('Hapus tarif ongkir ini?')">
+                                                <?= csrf_field() ?>
+                                                <button type="submit" class="btn btn-sm btn-outline-terracotta py-1 px-2" title="Hapus">
+                                                    <i class="bi bi-trash"></i>
+                                                </button>
+                                            </form>
                                         </td>
                                     </tr>
 
