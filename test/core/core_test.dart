@@ -1,6 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:rnz_store/core/formatters.dart';
+import 'package:rnz_store/core/ids.dart';
 import 'package:rnz_store/core/password_hasher.dart';
 import 'package:rnz_store/core/result.dart';
 import 'package:rnz_store/core/validators.dart';
@@ -64,5 +65,16 @@ void main() {
     );
     expect(r.isOk, isFalse);
     expect(r.error!.fields['email'], 'Terdaftar');
+  });
+
+  test('newId generates unique ids with optional prefix', () {
+    final id1 = newId();
+    final id2 = newId();
+    final prefixed = newId('idem');
+
+    expect(id1.isNotEmpty, isTrue);
+    expect(id2.isNotEmpty, isTrue);
+    expect(id1, isNot(equals(id2)));
+    expect(prefixed.startsWith('idem_'), isTrue);
   });
 }
