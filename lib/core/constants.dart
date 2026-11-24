@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 class AppColors {
@@ -75,12 +76,17 @@ class ApiConfig {
   /// - Untuk Flutter Web / Desktop / iOS: Gunakan http://localhost:8080
   /// Dapat juga di-override saat build/run dengan:
   /// flutter run --dart-define=API_BASE_URL=https://xxx.trycloudflare.com
-  static const String defaultBaseUrl = String.fromEnvironment(
-    'API_BASE_URL',
-    defaultValue: 'http://10.0.2.2:8080',
-  );
+  static String? _customBaseUrl;
 
-  static String baseUrl = defaultBaseUrl;
+  static String get defaultBaseUrl {
+    const fromEnv = String.fromEnvironment('API_BASE_URL');
+    if (fromEnv.isNotEmpty) return fromEnv;
+    if (kIsWeb) return 'http://localhost:8080';
+    return 'http://10.0.2.2:8080';
+  }
+
+  static String get baseUrl => _customBaseUrl ?? defaultBaseUrl;
+  static set baseUrl(String value) => _customBaseUrl = value;
 
   static String get apiUrl => '$baseUrl/api/v1';
   static String get loginUrl => '$apiUrl/auth/login';
