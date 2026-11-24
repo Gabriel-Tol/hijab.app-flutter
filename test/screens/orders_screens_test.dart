@@ -291,36 +291,13 @@ void main() {
     expect(orders.selected!.status, OrderStatus.paymentVerification);
   });
 
-  testWidgets('demo admin approve -> ship flow updates the status', (
+  testWidgets('order detail does not show demo admin panel', (
     tester,
   ) async {
     await loginAsDemo();
     final order = await makeOrder();
-    expect(
-      (await orders.uploadProof(order.id, _jpeg, 'bukti.jpg')).isOk,
-      isTrue,
-    );
-
     await pumpAt(tester, '/orders/${order.id}');
-    await tester.ensureVisible(find.text('Mode Demo — aksi admin'));
-    await tester.tap(find.text('Mode Demo — aksi admin'));
-    await tester.pumpAndSettle();
-
-    await tester.ensureVisible(find.byKey(const Key('admin-approve')));
-    await tester.tap(find.byKey(const Key('admin-approve')));
-    await tester.pumpAndSettle();
-    expect(orders.selected!.status, OrderStatus.processing);
-
-    await tester.ensureVisible(find.byKey(const Key('admin-tracking')));
-    await tester.enterText(
-      find.byKey(const Key('admin-tracking')),
-      'JNE9876543210',
-    );
-    await tester.ensureVisible(find.byKey(const Key('admin-ship')));
-    await tester.tap(find.byKey(const Key('admin-ship')));
-    await tester.pumpAndSettle();
-
-    expect(orders.selected!.status, OrderStatus.shipped);
-    expect(find.text('JNE9876543210'), findsOneWidget);
+    expect(find.text('Mode Demo — aksi admin'), findsNothing);
+    expect(find.byKey(const Key('admin-panel')), findsNothing);
   });
 }

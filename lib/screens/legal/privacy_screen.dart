@@ -63,12 +63,12 @@ class PrivacyScreen extends StatelessWidget {
                   'dianonimkan dan seluruh sesi Anda akan dibersihkan.',
             ),
             _section(
-              title: '4. Batasan Mode Demo',
+              title: '4. Keamanan dan Transaksi Pesanan',
               body:
-                  'Aplikasi ini merupakan simulasi tugas perkuliahan / portofolio. '
-                  'Fitur admin seperti verifikasi pembayaran dan pengiriman resi '
-                  'disediakan secara lokal untuk mendemonstrasikan siklus hidup '
-                  'pesanan tanpa melibatkan transaksi uang riil.',
+                  'Setiap transaksi dan pesanan diproses secara aman melalui '
+                  'sistem backend resmi RnZ Store. Verifikasi pembayaran dan '
+                  'nomor resi pengiriman diproses langsung oleh tim admin toko '
+                  'untuk menjamin kepastian pesanan pelanggan.',
             ),
             _section(
               title: '5. Kontak Pengembang',

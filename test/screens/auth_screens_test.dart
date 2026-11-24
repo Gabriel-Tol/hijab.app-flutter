@@ -129,7 +129,7 @@ void main() {
       find.text('Jika email terdaftar, kode reset telah dibuat.'),
       findsOneWidget,
     );
-    expect(find.text('Mode Demo'), findsOneWidget);
+    expect(find.text('Kode Verifikasi'), findsOneWidget);
 
     final code = tester
         .widget<Text>(find.byKey(const Key('demo-reset-code')))

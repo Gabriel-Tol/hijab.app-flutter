@@ -54,7 +54,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
       context: context,
       builder: (dialogContext) {
         return AlertDialog(
-          title: const Text('Mode Demo'),
+          title: const Text('Kode Verifikasi'),
           content: Column(
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -77,7 +77,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
               ),
               const SizedBox(height: AppSpacing.sm),
               const Text(
-                'Kode berlaku 30 menit. Pada aplikasi nyata, kode dikirim ke email.',
+                'Kode verifikasi berlaku selama 30 menit. Masukkan kode ini untuk melanjutkan perubahan kata sandi.',
                 style: TextStyle(
                   fontFamily: 'Manrope',
                   fontSize: 12,

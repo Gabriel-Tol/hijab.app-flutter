@@ -104,8 +104,9 @@ void main() {
     expect(find.text('Kebijakan Privasi'), findsOneWidget);
     expect(find.text('Hubungi Toko'), findsOneWidget);
     expect(find.text('Keluar'), findsOneWidget);
-    expect(find.text('Mode Demo'), findsOneWidget);
-    expect(find.text('Reset Data Demo'), findsOneWidget);
+    expect(find.text('Mode Demo'), findsNothing);
+    expect(find.text('Reset Data Demo'), findsNothing);
+    expect(find.text('Zona Berbahaya'), findsOneWidget);
   });
 
   testWidgets('change password rejects a wrong current password', (

@@ -38,43 +38,6 @@ class ProfileScreen extends StatelessWidget {
     if (context.mounted) context.go('/home');
   }
 
-  Future<void> _resetDemo(BuildContext context) async {
-    final confirmed = await showDialog<bool>(
-      context: context,
-      builder: (dialogContext) => AlertDialog(
-        title: const Text('Reset Data Demo?'),
-        content: const Text(
-          'Semua data lokal akan dihapus dan diisi ulang dengan data bawaan '
-          '(akun demo, produk, dan pesanan awal). Sesi Anda akan keluar.',
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(dialogContext).pop(false),
-            child: const Text('Batal'),
-          ),
-          FilledButton(
-            key: const Key('reset-demo-confirm'),
-            onPressed: () => Navigator.of(dialogContext).pop(true),
-            child: const Text('Reset'),
-          ),
-        ],
-      ),
-    );
-    if (confirmed != true || !context.mounted) return;
-
-    final store = context.read<LocalStore>();
-    await store.clearAll();
-    await store.seedIfNeeded();
-    if (!context.mounted) return;
-    await context.read<AuthController>().logout();
-    if (context.mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Data demo berhasil diatur ulang.')),
-      );
-      context.go('/home');
-    }
-  }
-
   Future<void> _contactStore(BuildContext context) async {
     final uri = Uri.parse('https://wa.me/${AppConstants.storeWhatsApp}');
     try {
@@ -150,8 +113,6 @@ class ProfileScreen extends StatelessWidget {
                       ),
                     ]),
                     const SizedBox(height: AppSpacing.xl),
-                    _demoCard(context),
-                    const SizedBox(height: AppSpacing.lg),
                     _dangerCard(context),
                   ],
                 ),
@@ -264,46 +225,6 @@ class ProfileScreen extends StatelessWidget {
         color: AppColors.muted,
       ),
       onTap: onTap,
-    );
-  }
-
-  Widget _demoCard(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(AppSpacing.lg),
-      decoration: BoxDecoration(
-        color: AppColors.surface,
-        border: Border.all(color: AppColors.line),
-        borderRadius: BorderRadius.circular(AppRadius.medium),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const Text(
-            'Mode Demo',
-            style: TextStyle(
-              fontFamily: 'Fraunces',
-              fontSize: 17,
-              fontWeight: FontWeight.w600,
-              color: AppColors.ink,
-            ),
-          ),
-          const SizedBox(height: AppSpacing.xs),
-          const Text(
-            'Kembalikan basis data perangkat ke kondisi awal demo (seeding ulang).',
-            style: TextStyle(
-              fontFamily: 'Manrope',
-              fontSize: 12,
-              color: AppColors.muted,
-            ),
-          ),
-          const SizedBox(height: AppSpacing.md),
-          OutlinedButton(
-            key: const Key('reset-demo-button'),
-            onPressed: () => _resetDemo(context),
-            child: const Text('Reset Data Demo'),
-          ),
-        ],
-      ),
     );
   }
 

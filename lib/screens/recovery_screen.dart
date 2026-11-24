@@ -79,7 +79,7 @@ class _RecoveryScreenState extends State<RecoveryScreen> {
                     const SizedBox(height: AppSpacing.sm),
                     const Text(
                       'Penyimpanan lokal perangkat tidak dapat dibaca atau telah mengalami kerusakan data. '
-                      'Silakan atur ulang data demo untuk melanjutkan menggunakan aplikasi.',
+                      'Silakan atur ulang data lokal perangkat untuk melanjutkan menggunakan aplikasi.',
                       style: TextStyle(
                         fontFamily: 'Manrope',
                         fontSize: 14,
@@ -101,7 +101,7 @@ class _RecoveryScreenState extends State<RecoveryScreen> {
                     const SizedBox(height: AppSpacing.xl),
                     RnzButton(
                       key: const Key('recovery-reset-button'),
-                      label: 'Reset Data Demo',
+                      label: 'Atur Ulang Data',
                       loading: _resetting,
                       onPressed: _reset,
                     ),

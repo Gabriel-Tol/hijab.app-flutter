@@ -165,15 +165,6 @@ class _LoginScreenState extends State<LoginScreen> {
                     child: const Text('Lihat katalog'),
                   ),
                 ),
-                const SizedBox(height: AppSpacing.lg),
-                const Text(
-                  'Akun demo: nadia@rnzstore.id / Hijab1234',
-                  style: TextStyle(
-                    fontFamily: 'Manrope',
-                    fontSize: 12,
-                    color: AppColors.muted,
-                  ),
-                ),
               ],
             ),
           ),
