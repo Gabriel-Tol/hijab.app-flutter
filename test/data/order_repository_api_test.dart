@@ -6,6 +6,7 @@ import 'package:http/http.dart' as http;
 import 'package:http/testing.dart';
 import 'package:rnz_store/data/api_client.dart';
 import 'package:rnz_store/data/local_store.dart';
+import 'package:rnz_store/data/models/order.dart';
 import 'package:rnz_store/data/repositories/cart_repository.dart';
 import 'package:rnz_store/data/repositories/catalog_repository.dart';
 import 'package:rnz_store/data/repositories/checkout_repository.dart';
@@ -199,5 +200,88 @@ void main() {
 
     expect(uploadRes.isOk, isTrue);
     expect(proofUploaded, isTrue);
+  });
+
+  test(
+      'OrderRepository syncOrders updates order status and shipment from backend',
+      () async {
+    final f = await createFixtures();
+    final mock = MockClient((request) async {
+      if (request.url.path.endsWith('/auth/login')) {
+        return http.Response(
+          jsonEncode({
+            'success': true,
+            'data': {'token': 'test_token', 'user': {'id': 2}}
+          }),
+          200,
+        );
+      }
+      if (request.url.path.endsWith('/orders/checkout')) {
+        return http.Response(
+          jsonEncode({
+            'success': true,
+            'data': {
+              'id': 99,
+              'order_no': 'RNZ-261124-9999',
+              'status': 'awaiting_payment',
+              'total': 84000,
+            }
+          }),
+          201,
+        );
+      }
+      if (request.url.path.endsWith('/orders')) {
+        return http.Response(
+          jsonEncode({
+            'success': true,
+            'data': [
+              {
+                'id': 99,
+                'order_no': 'RNZ-261124-9999',
+                'status': 'shipped',
+                'shipment': {
+                  'courier': 'JNE',
+                  'tracking_no': 'JNE-E2E-12345',
+                  'shipped_at': '2026-11-24T05:04:14Z',
+                }
+              }
+            ]
+          }),
+          200,
+        );
+      }
+      return http.Response('Not Found', 404);
+    });
+
+    final apiClient = ApiClient(
+      client: mock,
+      store: f.store,
+      baseUrl: 'http://test.local',
+    );
+    final orderRepo = OrderRepository(
+      f.store,
+      f.cart,
+      f.profile,
+      f.checkout,
+      apiClient: apiClient,
+    );
+
+    await f.cart.add('u-demo', 'p01-v1', qty: 1);
+    final createResult = await orderRepo.createOrder(
+      userId: 'u-demo',
+      addressId: 'a1',
+      paymentMethodId: 'pm-bca',
+      idempotencyKey: 'test-idem-sync',
+    );
+    expect(createResult.isOk, isTrue);
+
+    await orderRepo.syncOrders();
+
+    final updated = orderRepo.orderById(createResult.value!.id, 'u-demo');
+    expect(updated, isNotNull);
+    expect(updated!.status, equals(OrderStatus.shipped));
+    expect(updated.shipment, isNotNull);
+    expect(updated.shipment!.trackingNo, equals('JNE-E2E-12345'));
+    expect(updated.shipment!.courier, equals('JNE'));
   });
 }

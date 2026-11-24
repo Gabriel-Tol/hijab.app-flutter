@@ -23,7 +23,7 @@ class JwtAuthFilter implements FilterInterface
             ]);
         }
 
-        $token = $matches[1];
+        $token = trim($matches[1], "\"'");
         $jwtSecret = env('JWT_SECRET');
 
         if (empty($jwtSecret)) {

@@ -59,7 +59,105 @@ class OrderRepository {
 
   String? proofDataUrl(PaymentProof proof) => _store.proof(proof.storageKey);
 
+  Future<void> syncOrders() async {
+    if (_apiClient == null) return;
+    try {
+      final res = await _apiClient!.fetchOrders();
+      if (!res.isOk || res.value == null) return;
+
+      final backendOrders = res.value!;
+      final currentOrders = _orders();
+      final updatedOrders = <Order>[];
+      var changed = false;
+
+      for (final order in currentOrders) {
+        final backendOrder = backendOrders.cast<dynamic>().firstWhere(
+          (bo) {
+            if (bo is! Map) return false;
+            return bo['order_no']?.toString() == order.orderNo ||
+                bo['id']?.toString() == _backendOrderId(order)?.toString();
+          },
+          orElse: () => null,
+        );
+
+        if (backendOrder == null || backendOrder is! Map) {
+          updatedOrders.add(order);
+          continue;
+        }
+
+        final statusStr = backendOrder['status'] as String?;
+        OrderStatus? newStatus;
+        switch (statusStr) {
+          case 'waiting_payment':
+            newStatus = OrderStatus.awaitingPayment;
+            break;
+          case 'verifying_payment':
+            newStatus = OrderStatus.paymentVerification;
+            break;
+          case 'processing':
+            newStatus = OrderStatus.processing;
+            break;
+          case 'shipped':
+            newStatus = OrderStatus.shipped;
+            break;
+          case 'delivered':
+          case 'completed':
+            newStatus = OrderStatus.completed;
+            break;
+          case 'cancelled':
+            newStatus = OrderStatus.cancelled;
+            break;
+        }
+
+        Shipment? shipment = order.shipment;
+        final rawShipment = backendOrder['shipment'];
+        if (rawShipment != null && rawShipment is Map) {
+          shipment = Shipment(
+            courier: rawShipment['courier']?.toString() ?? 'Kurir',
+            trackingNo: rawShipment['tracking_no']?.toString() ?? '',
+            shippedAt: DateTime.tryParse(rawShipment['shipped_at']?.toString() ?? '') ??
+                DateTime.now(),
+          );
+        }
+
+        final statusChanged = newStatus != null && newStatus != order.status;
+        final shipmentChanged = shipment != null &&
+            (order.shipment == null ||
+                order.shipment!.trackingNo != shipment.trackingNo);
+
+        if (statusChanged || shipmentChanged) {
+          changed = true;
+          updatedOrders.add(
+            order.copyWith(
+              status: newStatus ?? order.status,
+              shipment: shipment,
+              statusLogs: [
+                ...order.statusLogs,
+                _log(
+                  from: order.status,
+                  to: newStatus ?? order.status,
+                  note: 'Sinkronisasi backend (${statusStr ?? ''})',
+                  actor: ActorType.admin,
+                  at: DateTime.now(),
+                ),
+              ],
+            ),
+          );
+        } else {
+          updatedOrders.add(order);
+        }
+      }
+
+      if (changed) {
+        await _writeOrders(updatedOrders);
+      }
+    } catch (_) {
+      // Graceful fallback
+    }
+  }
+
   Future<void> applyTimeBasedTransitions({DateTime? now}) async {
+    await syncOrders();
     final nowValue = now ?? DateTime.now();
     final next = <Order>[];
     final restored = <String, int>{};

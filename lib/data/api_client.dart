@@ -25,14 +25,23 @@ class ApiClient {
 
   String get apiUrl => '$_baseUrl/api/v1';
 
+  String _sanitizeToken(String token) {
+    var t = token.trim();
+    if (t.startsWith('"') && t.endsWith('"') && t.length >= 2) {
+      t = t.substring(1, t.length - 1).trim();
+    }
+    return t;
+  }
+
   Future<AppResult<String>> ensureAuthenticated() async {
     if (_token != null && _token!.isNotEmpty) {
+      _token = _sanitizeToken(_token!);
       return AppResult.ok(_token!);
     }
 
-    final storedToken = _store.string('api_jwt_token');
-    if (storedToken != null && storedToken.isNotEmpty) {
-      _token = storedToken;
+    final readToken = _store.string('api_jwt_token');
+    if (readToken != null && readToken.isNotEmpty) {
+      _token = _sanitizeToken(readToken);
       return AppResult.ok(_token!);
     }
 
@@ -56,9 +65,10 @@ class ApiClient {
       if (response.statusCode >= 200 && response.statusCode < 300) {
         final token = decoded['data']?['token'] as String?;
         if (token != null && token.isNotEmpty) {
-          _token = token;
-          await _store.write('api_jwt_token', token);
-          return AppResult.ok(token);
+          final cleanToken = _sanitizeToken(token);
+          _token = cleanToken;
+          await _store.write('api_jwt_token', cleanToken);
+          return AppResult.ok(cleanToken);
         }
       }
 
