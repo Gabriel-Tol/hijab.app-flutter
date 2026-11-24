@@ -81,7 +81,7 @@ class ReportController extends BaseController
             ->whereIn('orders.status', ['processing', 'shipped', 'completed'])
             ->where('orders.created_at >=', $start)
             ->where('orders.created_at <=', $end)
-            ->groupBy('order_items.variant_id')
+            ->groupBy(['order_items.variant_id', 'order_items.product_name', 'order_items.variant_label'])
             ->orderBy('total_qty', 'DESC')
             ->limit(5)
             ->get()->getResultArray();

@@ -53,7 +53,7 @@ class CatalogController extends BaseApiController
             ->join('product_variants', 'product_variants.product_id = products.id AND product_variants.is_active = 1', 'left')
             ->where('products.is_active', 1)
             ->where('products.deleted_at', null)
-            ->groupBy('products.id')
+            ->groupBy(['products.id', 'categories.name'])
             ->orderBy('products.id', 'DESC');
 
         if (!empty($categoryId)) {

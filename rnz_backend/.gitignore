@@ -1,6 +1,7 @@
 # Executables
 bin/*.exe
 bin/cloudflared.exe
+public/null/
 
 #-------------------------
 # Operating Specific Junk Files
