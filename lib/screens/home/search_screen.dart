@@ -212,7 +212,7 @@ class _SearchScreenState extends State<SearchScreen> {
           crossAxisCount: 2,
           mainAxisSpacing: AppSpacing.md,
           crossAxisSpacing: AppSpacing.md,
-          childAspectRatio: 0.55,
+          childAspectRatio: 0.50,
         ),
         itemCount: catalog.products.length + (catalog.loadingMore ? 1 : 0),
         itemBuilder: (context, index) {

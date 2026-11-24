@@ -29,6 +29,50 @@ void main() {
     expect(find.text(product.name), findsOneWidget);
   });
 
+  testWidgets(
+    'ProductCard does not overflow on mobile grids with 2-line title across screen sizes',
+    (tester) async {
+      final product = sampleProduct().copyWith(
+        name: 'Pashmina Ring Scarf Mocca Silk Premium',
+      );
+
+      for (final width in [320.0, 360.0, 392.0, 412.0]) {
+        tester.view.physicalSize = Size(width, 800);
+        tester.view.devicePixelRatio = 1.0;
+
+        await tester.pumpWidget(
+          MaterialApp(
+            theme: AppTheme.light,
+            home: Scaffold(
+              body: GridView(
+                padding: const EdgeInsets.symmetric(horizontal: 20),
+                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 2,
+                  mainAxisSpacing: 12,
+                  crossAxisSpacing: 12,
+                  childAspectRatio: 0.50,
+                ),
+                children: [
+                  ProductCard(product: product, onTap: () {}),
+                ],
+              ),
+            ),
+          ),
+        );
+
+        expect(
+          tester.takeException(),
+          isNull,
+          reason: 'Failed on screen width $width',
+        );
+        expect(find.text(product.name), findsOneWidget);
+      }
+
+      tester.view.resetPhysicalSize();
+      tester.view.resetDevicePixelRatio();
+    },
+  );
+
   testWidgets('QuantityStepper respects min and max', (tester) async {
     var value = 1;
 

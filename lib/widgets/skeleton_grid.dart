@@ -44,7 +44,7 @@ class _SkeletonGridState extends State<SkeletonGrid>
           crossAxisCount: 2,
           mainAxisSpacing: AppSpacing.md,
           crossAxisSpacing: AppSpacing.md,
-          childAspectRatio: 0.55,
+          childAspectRatio: 0.50,
         ),
         itemBuilder: (context, index) {
           return Container(
