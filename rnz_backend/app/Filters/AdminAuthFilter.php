@@ -1,0 +1,23 @@
+<?php
+
+namespace App\Filters;
+
+use CodeIgniter\Filters\FilterInterface;
+use CodeIgniter\HTTP\RequestInterface;
+use CodeIgniter\HTTP\ResponseInterface;
+
+class AdminAuthFilter implements FilterInterface
+{
+    public function before(RequestInterface $request, $arguments = null)
+    {
+        $session = session();
+        if (!$session->get('admin_logged_in') || $session->get('admin_role') !== 'admin') {
+            return redirect()->to('/admin/login')->with('error', 'Silakan login terlebih dahulu untuk mengakses panel admin.');
+        }
+    }
+
+    public function after(RequestInterface $request, ResponseInterface $response, $arguments = null)
+    {
+        // No action needed
+    }
+}
