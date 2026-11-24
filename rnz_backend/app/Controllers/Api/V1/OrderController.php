@@ -43,10 +43,12 @@ class OrderController extends BaseApiController
             $items         = $json['items'] ?? null;
             $address       = $json['address'] ?? null;
             $paymentMethod = $json['payment_method'] ?? null;
+            $shippingCost  = isset($json['shipping_cost']) ? (int)$json['shipping_cost'] : null;
         } else {
             $items         = $this->request->getVar('items');
             $address       = $this->request->getVar('address');
             $paymentMethod = $this->request->getVar('payment_method');
+            $shippingCost  = $this->request->getVar('shipping_cost') !== null ? (int)$this->request->getVar('shipping_cost') : null;
         }
 
         if (empty($items) || !is_array($items)) {
@@ -67,7 +69,8 @@ class OrderController extends BaseApiController
                 (int)$user->sub,
                 $items,
                 $address,
-                $paymentMethod
+                $paymentMethod,
+                $shippingCost
             );
 
             // Ambil rincian item pesanan
@@ -228,6 +231,22 @@ class OrderController extends BaseApiController
             return $this->respondWithSuccess(null, 'Pesanan berhasil dibatalkan dan stok dikembalikan.');
         } catch (Exception $e) {
             return $this->respondWithError('Gagal membatalkan pesanan: ' . $e->getMessage(), 400);
+        }
+    }
+
+    public function completeOrder($id)
+    {
+        $user = $this->getAuthenticatedUser();
+        if (!$user) {
+            return $this->respondWithError('Otentikasi diperlukan.', 401);
+        }
+
+        try {
+            $this->orderService->completeOrder((int)$id, (int)$user->sub);
+            $order = $this->orderModel->find($id);
+            return $this->respondWithSuccess($order, 'Pesanan berhasil diselesaikan.');
+        } catch (Exception $e) {
+            return $this->respondWithError('Gagal menyelesaikan pesanan: ' . $e->getMessage(), 400);
         }
     }
 }

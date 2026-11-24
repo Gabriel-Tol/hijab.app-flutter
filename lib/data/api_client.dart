@@ -13,6 +13,7 @@ class ApiClient {
     required LocalStore store,
     String? baseUrl,
   })  : _client = client ?? http.Client(),
+        // ignore: prefer_initializing_formals
         _store = store,
         _baseUrl = (baseUrl ?? ApiConfig.baseUrl).replaceAll(RegExp(r'/+$'), '');
 
@@ -87,6 +88,7 @@ class ApiClient {
     required List<Map<String, dynamic>> items,
     required Map<String, dynamic> address,
     required Map<String, dynamic> paymentMethod,
+    int? shippingCost,
   }) async {
     final authRes = await ensureAuthenticated();
     if (!authRes.isOk) {
@@ -105,6 +107,8 @@ class ApiClient {
           'items': items,
           'address': address,
           'payment_method': paymentMethod,
+          // ignore: use_null_aware_elements
+          if (shippingCost != null) 'shipping_cost': shippingCost,
         }),
       );
 
@@ -252,6 +256,51 @@ class ApiClient {
     } catch (e) {
       return AppResult.fail(
         AppError(code: 'network_error', message: 'Gagal memuat pesanan: $e'),
+      );
+    }
+  }
+
+  Future<AppResult<void>> completeOrder(int orderId) async {
+    final authRes = await ensureAuthenticated();
+    if (!authRes.isOk) return AppResult.fail(authRes.error!);
+
+    try {
+      final uri = Uri.parse('$apiUrl/orders/$orderId/complete');
+      var response = await _client.post(
+        uri,
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $_token',
+        },
+      );
+
+      if (response.statusCode == 401) {
+        _token = null;
+        await _store.remove('api_jwt_token');
+        final reauth = await ensureAuthenticated();
+        if (reauth.isOk) {
+          response = await _client.post(
+            uri,
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': 'Bearer $_token',
+            },
+          );
+        }
+      }
+
+      if (response.statusCode >= 200 && response.statusCode < 300) {
+        return AppResult.ok(null);
+      }
+
+      final decoded = jsonDecode(response.body);
+      final message = decoded is Map && decoded['message'] != null
+          ? decoded['message'].toString()
+          : 'Gagal menyelesaikan pesanan (${response.statusCode})';
+      return AppResult.fail(AppError(code: 'complete_error', message: message));
+    } catch (e) {
+      return AppResult.fail(
+        AppError(code: 'network_error', message: 'Gagal menghubungi server: $e'),
       );
     }
   }

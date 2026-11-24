@@ -4,7 +4,6 @@ import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../../core/constants.dart';
-import '../../data/local_store.dart';
 import '../../data/models/user.dart';
 import '../../state/auth_controller.dart';
 import '../../widgets/main_scaffold.dart';

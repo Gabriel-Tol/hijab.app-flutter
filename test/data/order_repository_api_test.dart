@@ -83,7 +83,7 @@ void main() {
       apiClient: apiClient,
     );
 
-    await f.cart.add('u-demo', 'p01-v1', qty: 1);
+    f.cart.add('u-demo', 'p01-v1', qty: 1);
     final result = await orderRepo.createOrder(
       userId: 'u-demo',
       addressId: 'a1',
@@ -116,7 +116,7 @@ void main() {
       apiClient: apiClient,
     );
 
-    await f.cart.add('u-demo', 'p01-v1', qty: 1);
+    f.cart.add('u-demo', 'p01-v1', qty: 1);
     final result = await orderRepo.createOrder(
       userId: 'u-demo',
       addressId: 'a1',
@@ -180,7 +180,7 @@ void main() {
       apiClient: apiClient,
     );
 
-    await f.cart.add('u-demo', 'p01-v1', qty: 1);
+    f.cart.add('u-demo', 'p01-v1', qty: 1);
     final createRes = await orderRepo.createOrder(
       userId: 'u-demo',
       addressId: 'a1',
@@ -266,7 +266,7 @@ void main() {
       apiClient: apiClient,
     );
 
-    await f.cart.add('u-demo', 'p01-v1', qty: 1);
+    f.cart.add('u-demo', 'p01-v1', qty: 1);
     final createResult = await orderRepo.createOrder(
       userId: 'u-demo',
       addressId: 'a1',

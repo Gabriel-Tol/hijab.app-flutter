@@ -10,7 +10,6 @@ import '../../state/order_controller.dart';
 import '../../widgets/copy_field.dart';
 import '../../widgets/empty_state.dart';
 import '../../widgets/rnz_button.dart';
-import '../../widgets/rnz_text_field.dart';
 import '../../widgets/status_pill.dart';
 
 class OrderDetailScreen extends StatefulWidget {

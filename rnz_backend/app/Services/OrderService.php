@@ -166,20 +166,22 @@ class OrderService
                     throw new Exception("Produk tidak ditemukan.");
                 }
 
-                $unitPrice = (int)$product['price'];
+                $productName = !empty($item['product_name']) ? (string)$item['product_name'] : ($product ? $product['name'] : 'Produk Hijab');
+                $variantLabel = !empty($item['variant_label']) ? (string)$item['variant_label'] : ($lockedVariant ? $lockedVariant['color'] . ($lockedVariant['size'] ? ' - ' . $lockedVariant['size'] : '') : 'Standar');
+                $unitPrice = !empty($item['unit_price']) && (int)$item['unit_price'] > 0 ? (int)$item['unit_price'] : ($product ? (int)$product['price'] : 0);
                 $lineTotal = $unitPrice * $qty;
                 $subtotal += $lineTotal;
 
                 $stockBefore = (int)$lockedVariant['stock'];
-                $stockAfter  = $stockBefore - $qty;
+                $stockAfter  = max(0, $stockBefore - $qty);
 
                 // Deduct stock
                 $this->variantModel->update($variantId, ['stock' => $stockAfter]);
 
                 $preparedItems[] = [
                     'variant_id'    => $variantId,
-                    'product_name'  => $product['name'],
-                    'variant_label' => $lockedVariant['color'] . ($lockedVariant['size'] ? ' - ' . $lockedVariant['size'] : ''),
+                    'product_name'  => $productName,
+                    'variant_label' => $variantLabel,
                     'unit_price'    => $unitPrice,
                     'qty'           => $qty,
                     'line_total'    => $lineTotal,
@@ -354,6 +356,55 @@ class OrderService
             $this->db->transCommit();
 
             return $this->variantModel->find($variantId);
+        } catch (Exception $e) {
+            $this->db->transRollback();
+            throw $e;
+        }
+    }
+
+    /**
+     * Selesaikan pesanan ketika barang telah diterima pelanggan
+     */
+    public function completeOrder(int $orderId, ?int $userId = null): bool
+    {
+        $this->db->transBegin();
+
+        try {
+            $order = $this->orderModel->find($orderId);
+            if (!$order) {
+                throw new Exception("Pesanan #{$orderId} tidak ditemukan.");
+            }
+
+            if ($userId !== null && (int)$order['user_id'] !== $userId) {
+                throw new Exception("Anda tidak berhak mengakses pesanan ini.");
+            }
+
+            if ($order['status'] === 'completed') {
+                $this->db->transCommit();
+                return true;
+            }
+
+            if ($order['status'] !== 'shipped') {
+                throw new Exception("Pesanan hanya dapat diselesaikan jika berstatus 'shipped' (Status saat ini: {$order['status']}).");
+            }
+
+            $now = date('Y-m-d H:i:s');
+            $this->orderModel->update($orderId, [
+                'status'     => 'completed',
+                'updated_at' => $now,
+            ]);
+
+            $this->orderStatusLogModel->insert([
+                'order_id'    => $orderId,
+                'from_status' => 'shipped',
+                'to_status'   => 'completed',
+                'note'        => 'Pesanan diterima pelanggan',
+                'actor_id'    => $userId,
+                'created_at'  => $now,
+            ]);
+
+            $this->db->transCommit();
+            return true;
         } catch (Exception $e) {
             $this->db->transRollback();
             throw $e;

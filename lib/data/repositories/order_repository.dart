@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'dart:typed_data';
 
 import 'package:flutter/foundation.dart';
 
@@ -23,7 +22,7 @@ class OrderRepository {
     this._profile,
     this._checkout, {
     ApiClient? apiClient,
-  }) : _apiClient = apiClient;
+  }) : _apiClient = apiClient; // ignore: prefer_initializing_formals
 
   final LocalStore _store;
   final CartRepository _cart;
@@ -62,9 +61,10 @@ class OrderRepository {
   String? proofDataUrl(PaymentProof proof) => _store.proof(proof.storageKey);
 
   Future<void> syncOrders() async {
-    if (_apiClient == null) return;
+    final client = _apiClient;
+    if (client == null) return;
     try {
-      final res = await _apiClient!.fetchOrders();
+      final res = await client.fetchOrders();
       if (!res.isOk || res.value == null) return;
 
       final backendOrders = res.value!;
@@ -111,6 +111,14 @@ class OrderRepository {
             break;
         }
 
+        // Jangan pernah turunkan status yang sudah selesai atau dibatalkan ke status sebelumnya
+        if (order.status == OrderStatus.completed && newStatus == OrderStatus.shipped) {
+          newStatus = OrderStatus.completed;
+        }
+        if (order.status == OrderStatus.cancelled && newStatus != OrderStatus.cancelled) {
+          newStatus = OrderStatus.cancelled;
+        }
+
         Shipment? shipment = order.shipment;
         final rawShipment = backendOrder['shipment'];
         if (rawShipment != null && rawShipment is Map) {
@@ -127,22 +135,28 @@ class OrderRepository {
             (order.shipment == null ||
                 order.shipment!.trackingNo != shipment.trackingNo);
 
+        final alreadyLogged = statusChanged &&
+            order.statusLogs.isNotEmpty &&
+            order.statusLogs.last.toStatus == newStatus;
+
         if (statusChanged || shipmentChanged) {
           changed = true;
           updatedOrders.add(
             order.copyWith(
               status: newStatus ?? order.status,
               shipment: shipment,
-              statusLogs: [
-                ...order.statusLogs,
-                _log(
-                  from: order.status,
-                  to: newStatus ?? order.status,
-                  note: 'Sinkronisasi backend (${statusStr ?? ''})',
-                  actor: ActorType.admin,
-                  at: DateTime.now(),
-                ),
-              ],
+              statusLogs: statusChanged && !alreadyLogged
+                  ? [
+                      ...order.statusLogs,
+                      _log(
+                        from: order.status,
+                        to: newStatus,
+                        note: 'Sinkronisasi backend (${statusStr ?? ''})',
+                        actor: ActorType.admin,
+                        at: DateTime.now(),
+                      ),
+                    ]
+                  : order.statusLogs,
             ),
           );
         } else {
@@ -283,11 +297,12 @@ class OrderRepository {
     next[index] = updated;
     await _writeOrders(next);
 
-    if (_apiClient != null) {
+    final client = _apiClient;
+    if (client != null) {
       final backendId = _backendOrderId(order);
       if (backendId != null) {
         try {
-          await _apiClient!.uploadPaymentProof(
+          await client.uploadPaymentProof(
             orderId: backendId,
             imageBytes: bytes,
             filename: fileName,
@@ -322,9 +337,9 @@ class OrderRepository {
     required String orderId,
     required String userId,
     DateTime? now,
-  }) {
+  }) async {
     final at = now ?? DateTime.now();
-    return _commitTransition(
+    final res = await _commitTransition(
       orderId: orderId,
       userId: userId,
       from: const {OrderStatus.shipped},
@@ -334,6 +349,24 @@ class OrderRepository {
       at: at,
       transform: (order) => order.copyWith(completedAt: at),
     );
+
+    final client = _apiClient;
+    if (res.isOk && client != null) {
+      final orders = _orders();
+      final idx = _indexOf(orders, orderId, userId);
+      if (idx >= 0) {
+        final backendId = _backendOrderId(orders[idx]);
+        if (backendId != null) {
+          try {
+            await client.completeOrder(backendId);
+          } catch (e) {
+            debugPrint('completeOrder API warning: $e');
+          }
+        }
+      }
+    }
+
+    return res;
   }
 
   Future<AppResult<void>> adminApprovePayment({
@@ -506,15 +539,22 @@ class OrderRepository {
     int? backendId;
     final addressSnapshot = _addressSnapshot(address);
 
-    if (_apiClient != null) {
+    final client = _apiClient;
+    if (client != null) {
       try {
         final apiItems = lines.map((l) {
           final variantNum =
               int.tryParse(l.variant.id.replaceAll(RegExp(r'[^0-9]'), '')) ?? 1;
+          final variantLabel =
+              '${l.variant.color}${l.variant.size != null ? ' - ${l.variant.size}' : ''}';
           return {
             'variant_id': variantNum,
             'sku': l.variant.sku,
+            'product_name': l.product.name,
+            'variant_label': variantLabel,
+            'unit_price': l.product.price,
             'qty': l.qty,
+            'line_total': l.lineTotal,
           };
         }).toList();
 
@@ -535,10 +575,11 @@ class OrderRepository {
           'account_name': method.accountName,
         };
 
-        final apiRes = await _apiClient!.checkout(
+        final apiRes = await client.checkout(
           items: apiItems,
           address: apiAddress,
           paymentMethod: apiPayment,
+          shippingCost: shippingCost,
         );
 
         if (apiRes.isOk && apiRes.value != null) {

@@ -86,6 +86,7 @@ $routes->group('api/v1', function ($routes) {
         $routes->get('orders/(:num)', 'Api\V1\OrderController::getOrderDetail/$1');
         $routes->post('orders/(:num)/proof', 'Api\V1\OrderController::uploadPaymentProof/$1');
         $routes->post('orders/(:num)/cancel', 'Api\V1\OrderController::cancelOrder/$1');
+        $routes->post('orders/(:num)/complete', 'Api\V1\OrderController::completeOrder/$1');
     });
 });
 
