@@ -4,6 +4,7 @@ import 'dart:typed_data';
 import '../../core/constants.dart';
 import '../../core/ids.dart';
 import '../../core/result.dart';
+import '../api_client.dart';
 import '../local_store.dart';
 import '../models/address.dart';
 import '../models/catalog.dart';
@@ -14,12 +15,28 @@ import 'checkout_repository.dart';
 import 'profile_repository.dart';
 
 class OrderRepository {
-  OrderRepository(this._store, this._cart, this._profile, this._checkout);
+  OrderRepository(
+    this._store,
+    this._cart,
+    this._profile,
+    this._checkout, {
+    ApiClient? apiClient,
+  }) : _apiClient = apiClient;
 
   final LocalStore _store;
   final CartRepository _cart;
   final ProfileRepository _profile;
   final CheckoutRepository _checkout;
+  final ApiClient? _apiClient;
+
+  int? _backendOrderId(Order order) {
+    final fromSnapshot = order.addressSnapshot['backend_order_id'];
+    if (fromSnapshot is int) return fromSnapshot;
+    if (fromSnapshot is String) return int.tryParse(fromSnapshot);
+    final fromStore = _store.string('backend_order_id_${order.id}');
+    if (fromStore != null) return int.tryParse(fromStore);
+    return int.tryParse(order.id);
+  }
 
   List<Order> ordersFor(String userId, {OrderStatus? status}) {
     final orders = _orders()
@@ -165,6 +182,22 @@ class OrderRepository {
     final next = [...orders];
     next[index] = updated;
     await _writeOrders(next);
+
+    if (_apiClient != null) {
+      final backendId = _backendOrderId(order);
+      if (backendId != null) {
+        try {
+          await _apiClient!.uploadPaymentProof(
+            orderId: backendId,
+            imageBytes: bytes,
+            filename: fileName,
+          );
+        } catch (_) {
+          // Graceful fallback
+        }
+      }
+    }
+
     return AppResult<void>.ok(null);
   }
 
@@ -369,7 +402,62 @@ class OrderRepository {
     final subtotal = lines.fold(0, (sum, line) => sum + line.lineTotal);
     final rate = _checkout.rateForCity(address.city);
     final shippingCost = rate?.cost ?? 0;
-    final orderNo = _nextOrderNo(createdAt);
+    var orderNo = _nextOrderNo(createdAt);
+    int? backendId;
+    final addressSnapshot = _addressSnapshot(address);
+
+    if (_apiClient != null) {
+      try {
+        final apiItems = lines.map((l) {
+          final variantNum =
+              int.tryParse(l.variant.id.replaceAll(RegExp(r'[^0-9]'), '')) ?? 1;
+          return {
+            'variant_id': variantNum,
+            'sku': l.variant.sku,
+            'qty': l.qty,
+          };
+        }).toList();
+
+        final apiAddress = {
+          'recipient_name': address.recipientName,
+          'recipient_phone': address.recipientPhone,
+          'province': address.province,
+          'city': address.city,
+          'district': address.district,
+          'address_line': address.addressLine,
+          'postal_code': address.postalCode,
+        };
+
+        final apiPayment = {
+          'provider': method.provider,
+          'type': method.type.name,
+          'account_no': method.accountNo,
+          'account_name': method.accountName,
+        };
+
+        final apiRes = await _apiClient!.checkout(
+          items: apiItems,
+          address: apiAddress,
+          paymentMethod: apiPayment,
+        );
+
+        if (apiRes.isOk && apiRes.value != null) {
+          final data = apiRes.value!;
+          if (data['order_no'] != null) {
+            orderNo = data['order_no'].toString();
+          }
+          if (data['id'] != null) {
+            backendId = int.tryParse(data['id'].toString());
+          }
+        }
+      } catch (_) {
+        // Safe offline fallback
+      }
+    }
+
+    if (backendId != null) {
+      addressSnapshot['backend_order_id'] = backendId;
+    }
 
     final touched = lines.map((line) => line.variant.id).toSet();
     final nextProducts = _products().map((product) {
@@ -388,8 +476,9 @@ class OrderRepository {
     }).toList(growable: false);
     await _writeProducts(nextProducts);
 
+    final orderId = newId('o');
     final order = Order(
-      id: newId('o'),
+      id: orderId,
       orderNo: orderNo,
       userId: userId,
       status: OrderStatus.awaitingPayment,
@@ -397,7 +486,7 @@ class OrderRepository {
       shippingCost: shippingCost,
       shippingNote: rate == null ? 'Ongkir dikonfirmasi admin' : null,
       total: subtotal + shippingCost,
-      addressSnapshot: _addressSnapshot(address),
+      addressSnapshot: addressSnapshot,
       paymentMethodSnapshot: _paymentSnapshot(method),
       payBefore: createdAt.add(AppConstants.paymentWindow),
       createdAt: createdAt,
@@ -428,6 +517,10 @@ class OrderRepository {
         ),
       ],
     );
+
+    if (backendId != null) {
+      await _store.write('backend_order_id_$orderId', backendId);
+    }
 
     await _writeOrders([..._orders(), order]);
     await _cart.clear(userId);

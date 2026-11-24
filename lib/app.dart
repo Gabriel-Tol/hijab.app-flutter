@@ -5,6 +5,7 @@ import 'package:provider/provider.dart';
 
 import 'core/app_theme.dart';
 import 'core/constants.dart';
+import 'data/api_client.dart';
 import 'data/local_store.dart';
 import 'data/repositories/auth_repository.dart';
 import 'data/repositories/cart_repository.dart';
@@ -55,11 +56,13 @@ class RnzApp extends StatefulWidget {
       cartRepository,
       catalogRepository,
     );
+    final apiClient = ApiClient(store: store);
     final orderRepository = OrderRepository(
       store,
       cartRepository,
       profileRepository,
       checkoutRepository,
+      apiClient: apiClient,
     );
     final authRepository = AuthRepository(store);
     final authController = AuthController(authRepository, profileRepository);
