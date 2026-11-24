@@ -57,3 +57,30 @@ $routes->group('admin', ['filter' => 'adminAuth'], function ($routes) {
     $routes->post('settings/shipping-rate/update/(:num)', 'Admin\SettingController::updateShippingRate/$1');
     $routes->get('settings/shipping-rate/delete/(:num)', 'Admin\SettingController::deleteShippingRate/$1');
 });
+
+// REST API v1 for Mobile Flutter
+$routes->group('api/v1', function ($routes) {
+    // Public Catalog & Settings
+    $routes->get('categories', 'Api\V1\CatalogController::getCategories');
+    $routes->get('products', 'Api\V1\CatalogController::getProducts');
+    $routes->get('products/(:any)', 'Api\V1\CatalogController::getProductDetail/$1');
+    $routes->get('settings/payment-methods', 'Api\V1\SettingController::getPaymentMethods');
+    $routes->get('settings/shipping-rates', 'Api\V1\SettingController::getShippingRates');
+
+    // Public Auth
+    $routes->post('auth/register', 'Api\V1\AuthController::register');
+    $routes->post('auth/login', 'Api\V1\AuthController::login');
+
+    // Protected Customer Routes
+    $routes->group('', ['filter' => 'jwtAuth'], function ($routes) {
+        $routes->get('auth/profile', 'Api\V1\AuthController::profile');
+        $routes->post('auth/address', 'Api\V1\AuthController::saveAddress');
+
+        $routes->post('orders/checkout', 'Api\V1\OrderController::checkout');
+        $routes->get('orders', 'Api\V1\OrderController::getOrders');
+        $routes->get('orders/(:num)', 'Api\V1\OrderController::getOrderDetail/$1');
+        $routes->post('orders/(:num)/proof', 'Api\V1\OrderController::uploadPaymentProof/$1');
+        $routes->post('orders/(:num)/cancel', 'Api\V1\OrderController::cancelOrder/$1');
+    });
+});
+

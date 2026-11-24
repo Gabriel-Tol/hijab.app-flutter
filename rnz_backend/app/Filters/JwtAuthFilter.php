@@ -1,0 +1,46 @@
+<?php
+
+namespace App\Filters;
+
+use CodeIgniter\Filters\FilterInterface;
+use CodeIgniter\HTTP\RequestInterface;
+use CodeIgniter\HTTP\ResponseInterface;
+use Firebase\JWT\JWT;
+use Firebase\JWT\Key;
+use Exception;
+
+class JwtAuthFilter implements FilterInterface
+{
+    public function before(RequestInterface $request, $arguments = null)
+    {
+        $authHeader = $request->getHeaderLine('Authorization');
+
+        if (empty($authHeader) || !preg_match('/Bearer\s(\S+)/', $authHeader, $matches)) {
+            $response = service('response');
+            return $response->setStatusCode(401)->setJSON([
+                'success' => false,
+                'message' => 'Token otentikasi tidak ditemukan. Silakan login terlebih dahulu.',
+            ]);
+        }
+
+        $token = $matches[1];
+        $jwtSecret = env('JWT_SECRET', 'rnz_store_secret_jwt_key_2026_super_secure_key_for_pontianak_hijab');
+
+        try {
+            $decoded = JWT::decode($token, new Key($jwtSecret, 'HS256'));
+            // Set user payload into request for controller access
+            $request->user = $decoded;
+        } catch (Exception $e) {
+            $response = service('response');
+            return $response->setStatusCode(401)->setJSON([
+                'success' => false,
+                'message' => 'Token tidak valid atau telah kedaluwarsa: ' . $e->getMessage(),
+            ]);
+        }
+    }
+
+    public function after(RequestInterface $request, ResponseInterface $response, $arguments = null)
+    {
+        // No action needed
+    }
+}
