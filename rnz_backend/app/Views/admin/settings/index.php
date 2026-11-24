@@ -54,7 +54,7 @@
                                                 <button class="btn btn-sm btn-outline-rnz py-1 px-2" data-bs-toggle="modal" data-bs-target="#modalEditPay<?= $p['id'] ?>">
                                                     <i class="bi bi-pencil"></i>
                                                 </button>
-                                                <form action="/admin/settings/payment-method/delete/<?= $p['id'] ?>" method="POST" class="d-inline m-0" onsubmit="return rnzConfirm('Hapus metode pembayaran ini?')">
+                                                <form action="/admin/settings/payment-method/delete/<?= $p['id'] ?>" method="POST" class="d-inline m-0" onsubmit="return rnzConfirm('Hapus metode pembayaran ini?', this)">
                                                     <?= csrf_field() ?>
                                                     <button type="submit" class="btn btn-sm btn-outline-terracotta py-1 px-2" title="Hapus">
                                                         <i class="bi bi-trash"></i>
@@ -158,7 +158,7 @@
                                                 <button class="btn btn-sm btn-outline-rnz py-1 px-2" data-bs-toggle="modal" data-bs-target="#modalEditShip<?= $s['id'] ?>">
                                                     <i class="bi bi-pencil"></i>
                                                 </button>
-                                                <form action="/admin/settings/shipping-rate/delete/<?= $s['id'] ?>" method="POST" class="d-inline m-0" onsubmit="return rnzConfirm('Hapus tarif ongkir ini?')">
+                                                <form action="/admin/settings/shipping-rate/delete/<?= $s['id'] ?>" method="POST" class="d-inline m-0" onsubmit="return rnzConfirm('Hapus tarif ongkir ini?', this)">
                                                     <?= csrf_field() ?>
                                                     <button type="submit" class="btn btn-sm btn-outline-terracotta py-1 px-2" title="Hapus">
                                                         <i class="bi bi-trash"></i>

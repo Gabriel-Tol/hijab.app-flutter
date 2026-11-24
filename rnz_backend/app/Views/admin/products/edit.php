@@ -65,7 +65,7 @@
                             <?php foreach ($images as $img): ?>
                                 <div class="position-relative border rounded p-1 bg-light" style="width: 90px; height: 90px;">
                                     <img src="/<?= esc($img['file_path']) ?>" class="rounded w-100 h-100" style="object-fit: cover;">
-                                    <button type="submit" form="deleteImgForm<?= $img['id'] ?>" class="btn btn-sm btn-danger position-absolute top-0 end-0 py-0 px-1 m-1" title="Hapus foto" onclick="return rnzConfirm('Hapus foto ini?')">
+                                    <button type="submit" form="deleteImgForm<?= $img['id'] ?>" class="btn btn-sm btn-danger position-absolute top-0 end-0 py-0 px-1 m-1" title="Hapus foto" onclick="return rnzConfirm('Hapus foto ini?', this, '/admin/products/delete-image/<?= $img['id'] ?>')">
                                         <i class="bi bi-trash"></i>
                                     </button>
                                 </div>
@@ -134,6 +134,9 @@
     <?php foreach ($images as $img): ?>
         <form id="deleteImgForm<?= $img['id'] ?>" action="/admin/products/delete-image/<?= $img['id'] ?>" method="POST" class="d-none">
             <?= csrf_field() ?>
+            <button type="submit" class="btn btn-sm btn-danger position-absolute top-0 end-0 py-0 px-1 m-1" title="Hapus foto" onsubmit="return rnzConfirm('Hapus foto ini?', this)">
+                <i class="bi bi-trash"></i>
+            </button>
         </form>
     <?php endforeach; ?>
 <?php endif; ?>

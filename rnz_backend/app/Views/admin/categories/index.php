@@ -50,7 +50,7 @@
                                     <button class="btn btn-sm btn-outline-rnz me-1 py-1 px-2" data-bs-toggle="modal" data-bs-target="#modalEditCategory<?= $cat['id'] ?>">
                                         <i class="bi bi-pencil"></i>
                                     </button>
-                                    <form action="/admin/categories/delete/<?= $cat['id'] ?>" method="POST" class="d-inline" onsubmit="return rnzConfirm('Apakah Anda yakin ingin menghapus kategori ini?')">
+                                    <form action="/admin/categories/delete/<?= $cat['id'] ?>" method="POST" class="d-inline" onsubmit="return rnzConfirm('Apakah Anda yakin ingin menghapus kategori ini?', this)">
                                         <?= csrf_field() ?>
                                         <button type="submit" class="btn btn-sm btn-outline-terracotta py-1 px-2" title="Hapus">
                                             <i class="bi bi-trash"></i>

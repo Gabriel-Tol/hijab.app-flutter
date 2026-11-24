@@ -461,9 +461,11 @@
         }
 
         // RNZ Store SweetAlert confirmation - replaces window.confirm()
-        // Usage: onclick="return rnzConfirm('Pesan konfirmasi')"
-        function rnzConfirm(message) {
-            return Swal.fire({
+        // Usage:
+        // - On form onsubmit: onsubmit="return rnzConfirm('Pesan', this)"
+        // - On button with form attribute: onclick="return rnzConfirm('Pesan', this)"
+        async function rnzConfirm(message, element) {
+            const result = await Swal.fire({
                 title: 'Konfirmasi?',
                 text: message,
                 icon: 'warning',
@@ -478,7 +480,23 @@
                     confirmButton: 'swal-confirm',
                     cancelButton: 'swal-cancel'
                 }
-            }).then((result) => result.isConfirmed);
+            });
+            if (!result.isConfirmed) {
+                return false;
+            }
+            
+            // Handle button with form attribute
+            if (element && element.form && typeof element.form.submit === 'function') {
+                element.form.submit();
+                return false;
+            }
+            
+            // For direct form submission (onsubmit)
+            if (element && typeof element.submit === 'function') {
+                element.submit();
+            }
+            
+            return false;
         }
 
         // RNZ Store success toast - shows a brief success notification
