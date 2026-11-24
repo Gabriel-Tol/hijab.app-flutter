@@ -8,6 +8,23 @@ class RnzStoreSeeder extends Seeder
 {
     public function run()
     {
+        $this->db->disableForeignKeyChecks();
+        $this->db->table('shipments')->truncate();
+        $this->db->table('order_status_logs')->truncate();
+        $this->db->table('payment_proofs')->truncate();
+        $this->db->table('order_items')->truncate();
+        $this->db->table('orders')->truncate();
+        $this->db->table('stock_movements')->truncate();
+        $this->db->table('product_images')->truncate();
+        $this->db->table('product_variants')->truncate();
+        $this->db->table('products')->truncate();
+        $this->db->table('categories')->truncate();
+        $this->db->table('shipping_rates')->truncate();
+        $this->db->table('payment_methods')->truncate();
+        $this->db->table('addresses')->truncate();
+        $this->db->table('users')->truncate();
+        $this->db->enableForeignKeyChecks();
+
         $now = date('Y-m-d H:i:s');
 
         // 1. Users
@@ -139,5 +156,115 @@ class RnzStoreSeeder extends Seeder
             ['region_name' => 'Luar Pulau Kalimantan', 'cost' => 45000, 'is_active' => 1, 'created_at' => $now, 'updated_at' => $now],
         ];
         $this->db->table('shipping_rates')->insertBatch($shippingRates);
+
+        // 7. Demo Orders untuk Dashboard & Web Admin Testing
+        $addressSnapshot = json_encode([
+            'recipient_name'  => 'Nadia Putri',
+            'recipient_phone' => '081234567890',
+            'province'        => 'Kalimantan Barat',
+            'city'            => 'Kota Pontianak',
+            'district'        => 'Pontianak Kota',
+            'address_line'    => 'Jl. Gajah Mada No. 45',
+            'postal_code'     => '78121',
+        ]);
+        $paymentSnapshot = json_encode([
+            'type'         => 'bank',
+            'provider'     => 'Bank BCA',
+            'account_no'   => '8930123456',
+            'account_name' => 'RnZ Store - Rafly',
+        ]);
+
+        // Order A: Verifying Payment (Perlu Verifikasi Admin)
+        $this->db->table('orders')->insert([
+            'order_no'                => 'RNZ-' . date('ymd') . '-1001',
+            'user_id'                 => $customerId,
+            'status'                  => 'verifying_payment',
+            'subtotal'                => 65000,
+            'shipping_cost'           => 10000,
+            'total'                   => 75000,
+            'address_snapshot'        => $addressSnapshot,
+            'payment_method_snapshot' => $paymentSnapshot,
+            'pay_before'              => date('Y-m-d H:i:s', strtotime('+24 hours')),
+            'created_at'              => date('Y-m-d H:i:s', strtotime('-2 hours')),
+            'updated_at'              => date('Y-m-d H:i:s', strtotime('-1 hour')),
+        ]);
+        $orderAId = $this->db->insertID();
+
+        $this->db->table('order_items')->insert([
+            'order_id'      => $orderAId,
+            'variant_id'    => 1,
+            'product_name'  => 'Pashmina Ceruty Baby Doll',
+            'variant_label' => 'Dusty Pink (175x75 cm)',
+            'unit_price'    => 65000,
+            'qty'           => 1,
+            'line_total'    => 65000,
+        ]);
+
+        $this->db->table('payment_proofs')->insert([
+            'order_id'   => $orderAId,
+            'file_path'  => 'uploads/proofs/sample-proof.png',
+            'status'     => 'pending',
+            'created_at' => date('Y-m-d H:i:s', strtotime('-1 hour')),
+        ]);
+
+        // Order B: Processing (Siap Kirim & Input Resi)
+        $this->db->table('orders')->insert([
+            'order_no'                => 'RNZ-' . date('ymd') . '-1002',
+            'user_id'                 => $customerId,
+            'status'                  => 'processing',
+            'subtotal'                => 90000,
+            'shipping_cost'           => 10000,
+            'total'                   => 100000,
+            'address_snapshot'        => $addressSnapshot,
+            'payment_method_snapshot' => $paymentSnapshot,
+            'pay_before'              => date('Y-m-d H:i:s', strtotime('+12 hours')),
+            'created_at'              => date('Y-m-d H:i:s', strtotime('-10 hours')),
+            'updated_at'              => date('Y-m-d H:i:s', strtotime('-8 hours')),
+        ]);
+        $orderBId = $this->db->insertID();
+
+        $this->db->table('order_items')->insert([
+            'order_id'      => $orderBId,
+            'variant_id'    => 4,
+            'product_name'  => 'Hijab Segiempat Voal Premium',
+            'variant_label' => 'Navy (115x115 cm)',
+            'unit_price'    => 45000,
+            'qty'           => 2,
+            'line_total'    => 90000,
+        ]);
+
+        // Order C: Shipped (Dalam Pengiriman)
+        $this->db->table('orders')->insert([
+            'order_no'                => 'RNZ-' . date('ymd') . '-1003',
+            'user_id'                 => $customerId,
+            'status'                  => 'shipped',
+            'subtotal'                => 50000,
+            'shipping_cost'           => 10000,
+            'total'                   => 60000,
+            'address_snapshot'        => $addressSnapshot,
+            'payment_method_snapshot' => $paymentSnapshot,
+            'pay_before'              => date('Y-m-d H:i:s', strtotime('-1 day')),
+            'created_at'              => date('Y-m-d H:i:s', strtotime('-2 days')),
+            'updated_at'              => date('Y-m-d H:i:s', strtotime('-1 day')),
+        ]);
+        $orderCId = $this->db->insertID();
+
+        $this->db->table('order_items')->insert([
+            'order_id'      => $orderCId,
+            'variant_id'    => 7,
+            'product_name'  => 'Inner Ciput Ninja Anti Pusing',
+            'variant_label' => 'Hitam (All Size)',
+            'unit_price'    => 25000,
+            'qty'           => 2,
+            'line_total'    => 50000,
+        ]);
+
+        $this->db->table('shipments')->insert([
+            'order_id'   => $orderCId,
+            'courier'    => 'JNE',
+            'tracking_no'=> 'JNE-PTK-9876543210',
+            'shipped_at' => date('Y-m-d H:i:s', strtotime('-1 day')),
+            'created_at' => date('Y-m-d H:i:s', strtotime('-1 day')),
+        ]);
     }
 }
