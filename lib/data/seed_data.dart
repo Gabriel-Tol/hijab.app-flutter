@@ -66,13 +66,14 @@ class SeedData {
 
     final products = _products(now);
 
-    const methods = [
+    final methods = [
       PaymentMethod(
         id: 'pm-bca',
         type: PaymentType.bank,
         provider: 'BCA',
         accountNo: '1234567890',
         accountName: 'RnZ Store',
+        isActive: true,
         sortOrder: 1,
       ),
       PaymentMethod(
@@ -81,6 +82,7 @@ class SeedData {
         provider: 'Mandiri',
         accountNo: '1370012345678',
         accountName: 'RnZ Store',
+        isActive: true,
         sortOrder: 2,
       ),
       PaymentMethod(
@@ -89,6 +91,7 @@ class SeedData {
         provider: 'DANA',
         accountNo: '081234567890',
         accountName: 'RnZ Store',
+        isActive: true,
         sortOrder: 3,
       ),
       PaymentMethod(

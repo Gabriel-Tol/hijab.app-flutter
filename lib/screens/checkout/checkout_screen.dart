@@ -40,11 +40,31 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
     if (userId != null) {
       _address = context.read<ProfileRepository>().defaultAddress(userId);
     }
-    _methods = context.read<CheckoutRepository>().activePaymentMethods();
-    _payment = _methods.isEmpty ? null : _methods.first;
+    // Load initial methods from local store (sync, for fast first paint)
+    _loadMethodsFromLocal();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (!mounted) return;
       context.read<CartController>().load();
+    });
+    // Async refresh from API to stay in sync with admin changes
+    _refreshFromApi();
+  }
+
+  void _loadMethodsFromLocal() {
+    _methods = context.read<CheckoutRepository>().activePaymentMethods();
+    _payment = _methods.isEmpty ? null : _methods.first;
+  }
+
+  Future<void> _refreshFromApi() async {
+    final checkoutRepo = context.read<CheckoutRepository>();
+    final newMethods = await checkoutRepo.fetchPaymentMethods();
+    if (!mounted) return;
+    setState(() {
+      _methods = newMethods;
+      // If previously selected payment no longer exists, reset to first
+      final stillExists = _payment != null && 
+          newMethods.any((m) => m.id == _payment!.id);
+      _payment = stillExists ? _payment : (_methods.isEmpty ? null : _methods.first);
     });
   }
 

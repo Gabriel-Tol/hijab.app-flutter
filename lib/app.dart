@@ -51,12 +51,13 @@ class RnzApp extends StatefulWidget {
     final catalogRepository = CatalogRepository(store);
     final profileRepository = ProfileRepository(store);
     final cartRepository = CartRepository(store, catalogRepository);
+    final apiClient = ApiClient(store: store);
     final checkoutRepository = CheckoutRepository(
       store,
       cartRepository,
       catalogRepository,
+      apiClient: apiClient,
     );
-    final apiClient = ApiClient(store: store);
     final orderRepository = OrderRepository(
       store,
       cartRepository,

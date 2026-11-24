@@ -304,4 +304,122 @@ class ApiClient {
       );
     }
   }
+
+  Future<AppResult<List<dynamic>>> fetchPaymentMethods() async {
+    final authRes = await ensureAuthenticated();
+    if (!authRes.isOk) {
+      return AppResult.fail(authRes.error!);
+    }
+
+    try {
+      final uri = Uri.parse('$apiUrl/settings/payment-methods');
+      final response = await _client.get(
+        uri,
+        headers: {
+          'Authorization': 'Bearer $_token',
+        },
+      );
+
+      if (response.statusCode == 401) {
+        _token = null;
+        await _store.remove('api_jwt_token');
+        final reauth = await ensureAuthenticated();
+        if (reauth.isOk) {
+          final reResponse = await _client.get(
+            uri,
+            headers: {
+              'Authorization': 'Bearer $_token',
+            },
+          );
+          return _handlePaymentMethodsResponse(reResponse);
+        }
+      }
+
+      return _handlePaymentMethodsResponse(response);
+    } catch (e) {
+      return AppResult.fail(
+        AppError(code: 'network_error', message: 'Gagal memuat metode pembayaran: $e'),
+      );
+    }
+  }
+
+  Future<AppResult<List<dynamic>>> _handlePaymentMethodsResponse(http.Response response) {
+    try {
+      final decoded = jsonDecode(response.body);
+      if (response.statusCode >= 200 && response.statusCode < 300) {
+        final list = decoded['data'] as List<dynamic>?;
+        if (list != null) {
+          return Future.value(AppResult.ok(list));
+        }
+      }
+
+      final message = decoded is Map && decoded['message'] != null
+          ? decoded['message'].toString()
+          : 'Gagal memuat metode pembayaran (${response.statusCode})';
+      return Future.value(AppResult.fail(AppError(code: 'fetch_error', message: message)));
+    } catch (e) {
+      return Future.value(AppResult.fail(
+        AppError(code: 'fetch_error', message: 'Gagal memproses respons: $e'),
+      ));
+    }
+  }
+
+  Future<AppResult<List<dynamic>>> fetchShippingRates() async {
+    final authRes = await ensureAuthenticated();
+    if (!authRes.isOk) {
+      return AppResult.fail(authRes.error!);
+    }
+
+    try {
+      final uri = Uri.parse('$apiUrl/settings/shipping-rates');
+      final response = await _client.get(
+        uri,
+        headers: {
+          'Authorization': 'Bearer $_token',
+        },
+      );
+
+      if (response.statusCode == 401) {
+        _token = null;
+        await _store.remove('api_jwt_token');
+        final reauth = await ensureAuthenticated();
+        if (reauth.isOk) {
+          final reResponse = await _client.get(
+            uri,
+            headers: {
+              'Authorization': 'Bearer $_token',
+            },
+          );
+          return _handleShippingRatesResponse(reResponse);
+        }
+      }
+
+      return _handleShippingRatesResponse(response);
+    } catch (e) {
+      return AppResult.fail(
+        AppError(code: 'network_error', message: 'Gagal memuat tarif pengiriman: $e'),
+      );
+    }
+  }
+
+  Future<AppResult<List<dynamic>>> _handleShippingRatesResponse(http.Response response) {
+    try {
+      final decoded = jsonDecode(response.body);
+      if (response.statusCode >= 200 && response.statusCode < 300) {
+        final list = decoded['data'] as List<dynamic>?;
+        if (list != null) {
+          return Future.value(AppResult.ok(list));
+        }
+      }
+
+      final message = decoded is Map && decoded['message'] != null
+          ? decoded['message'].toString()
+          : 'Gagal memuat tarif pengiriman (${response.statusCode})';
+      return Future.value(AppResult.fail(AppError(code: 'fetch_error', message: message)));
+    } catch (e) {
+      return Future.value(AppResult.fail(
+        AppError(code: 'fetch_error', message: 'Gagal memproses respons: $e'),
+      ));
+    }
+  }
 }
