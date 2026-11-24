@@ -198,10 +198,11 @@ class SeedData {
     final shippedItem = _item(pashmina, pashmina.variants.first, 1);
     final completedItem = _item(gamis, gamis.variants.first, 1);
 
-    final shippedCreated = DateTime(2026, 11, 2, 10, 15);
-    final shippedAt = DateTime(2026, 11, 12, 9);
-    final completedCreated = DateTime(2026, 10, 25, 13, 20);
-    final completedShippedAt = DateTime(2026, 10, 28, 8, 30);
+    final now = DateTime.now();
+    final shippedCreated = now.subtract(const Duration(days: 4));
+    final shippedAt = now.subtract(const Duration(days: 2));
+    final completedCreated = now.subtract(const Duration(days: 15));
+    final completedShippedAt = now.subtract(const Duration(days: 12));
 
     return [
       Order(

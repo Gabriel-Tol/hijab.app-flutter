@@ -66,6 +66,34 @@ class AppConstants {
   ];
 }
 
+class ApiConfig {
+  ApiConfig._();
+
+  /// URL dasar backend CodeIgniter 4.
+  /// - Untuk pengujian online/HP asli: Masukkan URL Cloudflare Tunnel (https://xxx.trycloudflare.com).
+  /// - Untuk Android Emulator: Gunakan http://10.0.2.2:8080
+  /// - Untuk Flutter Web / Desktop / iOS: Gunakan http://localhost:8080
+  /// Dapat juga di-override saat build/run dengan:
+  /// flutter run --dart-define=API_BASE_URL=https://xxx.trycloudflare.com
+  static const String defaultBaseUrl = String.fromEnvironment(
+    'API_BASE_URL',
+    defaultValue: 'http://10.0.2.2:8080',
+  );
+
+  static String baseUrl = defaultBaseUrl;
+
+  static String get apiUrl => '$baseUrl/api/v1';
+  static String get loginUrl => '$apiUrl/auth/login';
+  static String get registerUrl => '$apiUrl/auth/register';
+  static String get profileUrl => '$apiUrl/auth/profile';
+  static String get categoriesUrl => '$apiUrl/categories';
+  static String get productsUrl => '$apiUrl/products';
+  static String get checkoutUrl => '$apiUrl/orders/checkout';
+  static String get ordersUrl => '$apiUrl/orders';
+  static String get paymentMethodsUrl => '$apiUrl/settings/payment-methods';
+  static String get shippingRatesUrl => '$apiUrl/settings/shipping-rates';
+}
+
 class AppAssets {
   AppAssets._();
 
