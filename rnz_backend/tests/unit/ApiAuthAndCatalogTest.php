@@ -122,4 +122,30 @@ final class ApiAuthAndCatalogTest extends CIUnitTestCase
         $cancelJson = json_decode($cancelRes->getJSON(), true);
         $this->assertTrue($cancelJson['success']);
     }
+
+    public function testNadiaLoginAndFlexibleCheckout(): void
+    {
+        $loginRes = $this->call('post', 'api/v1/auth/login', [
+            'email'    => 'nadia@rnzstore.id',
+            'password' => 'Hijab1234',
+        ]);
+        $this->assertTrue($loginRes->isOK());
+        $token = json_decode($loginRes->getJSON(), true)['data']['token'];
+
+        $checkoutRes = $this->withHeaders(['Authorization' => "Bearer $token"])
+            ->call('post', 'api/v1/orders/checkout', [
+                'items' => [['sku' => 'RNZ-P01-1', 'qty' => 1]],
+                'address' => [
+                    'recipient_name'  => 'Nadia Putri',
+                    'recipient_phone' => '081234567890',
+                    'city'            => 'Kota Pontianak',
+                    'address_line'    => 'Jl. Gajah Mada No. 12',
+                ],
+                'payment_method' => [
+                    'provider'   => 'Bank BCA',
+                    'account_no' => '1234567890',
+                ],
+            ]);
+        $this->assertTrue($checkoutRes->isOK());
+    }
 }

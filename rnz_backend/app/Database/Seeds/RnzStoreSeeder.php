@@ -49,6 +49,16 @@ class RnzStoreSeeder extends Seeder
                 'created_at'    => $now,
                 'updated_at'    => $now,
             ],
+            [
+                'name'          => 'Nadia Putri (Flutter Demo)',
+                'email'         => 'nadia@rnzstore.id',
+                'phone'         => '081234567891',
+                'password_hash' => password_hash('Hijab1234', PASSWORD_BCRYPT),
+                'role'          => 'customer',
+                'status'        => 'active',
+                'created_at'    => $now,
+                'updated_at'    => $now,
+            ],
         ];
         $this->db->table('users')->insertBatch($users);
         $customerId = $this->db->table('users')->where('email', 'pelanggan@rnzstore.com')->get()->getRow()->id;

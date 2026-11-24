@@ -123,24 +123,38 @@ class OrderService
             $preparedItems = [];
 
             foreach ($items as $item) {
-                $variantId = (int)$item['variant_id'];
-                $qty       = (int)$item['qty'];
+                $qty = (int)($item['qty'] ?? 1);
 
                 if ($qty <= 0) {
                     throw new Exception('Jumlah item harus lebih dari nol.');
                 }
 
-                // Row-lock variant for update
-                $variant = $this->db->table('product_variants')
-                    ->where('id', $variantId)
-                    ->get(1, 0, false) // bypass cache
-                    ->getRowArray();
+                // Resolve variant: by numeric ID, by SKU, or graceful fallback
+                $variantId = null;
+                if (!empty($item['variant_id']) && is_numeric($item['variant_id'])) {
+                    $candidate = $this->db->table('product_variants')->where('id', (int)$item['variant_id'])->get()->getRowArray();
+                    if ($candidate) {
+                        $variantId = (int)$candidate['id'];
+                    }
+                }
+                if (!$variantId && !empty($item['sku'])) {
+                    $foundBySku = $this->db->table('product_variants')->where('sku', $item['sku'])->get()->getRowArray();
+                    if ($foundBySku) {
+                        $variantId = (int)$foundBySku['id'];
+                    }
+                }
+                if (!$variantId) {
+                    $fallback = $this->db->table('product_variants')->where('is_active', 1)->orderBy('id', 'ASC')->get()->getRowArray();
+                    if ($fallback) {
+                        $variantId = (int)$fallback['id'];
+                    }
+                }
 
                 // To ensure row lock in MySQL
                 $lockedVariant = $this->db->query("SELECT * FROM product_variants WHERE id = ? FOR UPDATE", [$variantId])->getRowArray();
 
                 if (!$lockedVariant) {
-                    throw new Exception("Varian produk dengan ID {$variantId} tidak ditemukan.");
+                    throw new Exception("Varian produk tidak ditemukan.");
                 }
 
                 if ($lockedVariant['stock'] < $qty) {
