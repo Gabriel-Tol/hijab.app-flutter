@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
 import '../../core/constants.dart';
+import '../../widgets/app_dialog.dart';
 import '../../core/validators.dart';
 import '../../state/auth_controller.dart';
 import '../../widgets/error_banner.dart';
@@ -50,56 +51,45 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
     final code = result.value;
     if (code == null) return;
 
-    final action = await showDialog<String>(
-      context: context,
-      builder: (dialogContext) {
-        return AlertDialog(
-          title: const Text('Kode Verifikasi'),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const Text(
-                'Kode reset dibuat untuk akun ini:',
-                style: TextStyle(fontFamily: 'Manrope', fontSize: 13),
-              ),
-              const SizedBox(height: AppSpacing.md),
-              Text(
-                code,
-                key: const Key('demo-reset-code'),
-                style: const TextStyle(
-                  fontFamily: 'Manrope',
-                  fontSize: 30,
-                  fontWeight: FontWeight.w700,
-                  letterSpacing: 6,
-                  color: AppColors.terracotta,
-                ),
-              ),
-              const SizedBox(height: AppSpacing.sm),
-              const Text(
-                'Kode verifikasi berlaku selama 30 menit. Masukkan kode ini untuk melanjutkan perubahan kata sandi.',
-                style: TextStyle(
-                  fontFamily: 'Manrope',
-                  fontSize: 12,
-                  color: AppColors.muted,
-                ),
-              ),
-            ],
+    final action = await showRnzConfirm(
+      context,
+      title: 'Kode Verifikasi',
+      content: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Text(
+            'Kode reset dibuat untuk akun ini:',
+            style: TextStyle(fontFamily: 'Manrope', fontSize: 13),
           ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.of(dialogContext).pop(),
-              child: const Text('Tutup'),
+          const SizedBox(height: AppSpacing.md),
+          Text(
+            code,
+            key: const Key('demo-reset-code'),
+            style: const TextStyle(
+              fontFamily: 'Manrope',
+              fontSize: 30,
+              fontWeight: FontWeight.w700,
+              letterSpacing: 6,
+              color: AppColors.terracotta,
             ),
-            FilledButton(
-              onPressed: () => Navigator.of(dialogContext).pop('reset'),
-              child: const Text('Lanjut Reset'),
+          ),
+          const SizedBox(height: AppSpacing.sm),
+          const Text(
+            'Kode verifikasi berlaku selama 30 menit. Masukkan kode ini untuk melanjutkan perubahan kata sandi.',
+            style: TextStyle(
+              fontFamily: 'Manrope',
+              fontSize: 12,
+              color: AppColors.muted,
             ),
-          ],
-        );
-      },
+          ),
+        ],
+      ),
+      cancelLabel: 'Tutup',
+      confirmLabel: 'Lanjut Reset',
+      type: DialogType.info,
     );
-    if (!mounted || action != 'reset') return;
+    if (!mounted || !action) return;
 
     final email = Uri.encodeComponent(Validators.normalizeEmail(_email.text));
     context.push('/reset-password?email=$email');

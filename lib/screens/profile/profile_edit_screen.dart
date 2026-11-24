@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
 import '../../core/constants.dart';
+import '../../widgets/app_snackbar.dart';
 import '../../core/validators.dart';
 import '../../data/repositories/profile_repository.dart';
 import '../../state/auth_controller.dart';
@@ -72,8 +73,10 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
 
     auth.refresh();
     setState(() => _submitting = false);
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Profil berhasil diperbarui.')),
+    showRnzSnackBar(
+      context,
+      message: 'Profil berhasil diperbarui.',
+      type: SnackType.success,
     );
     context.pop();
   }

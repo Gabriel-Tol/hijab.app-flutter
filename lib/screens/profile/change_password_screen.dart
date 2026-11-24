@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
 import '../../core/constants.dart';
+import '../../widgets/app_snackbar.dart';
 import '../../core/validators.dart';
 import '../../data/repositories/profile_repository.dart';
 import '../../widgets/error_banner.dart';
@@ -61,8 +62,10 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
     }
 
     setState(() => _submitting = false);
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Kata sandi berhasil diubah.')),
+    showRnzSnackBar(
+      context,
+      message: 'Kata sandi berhasil diubah.',
+      type: SnackType.success,
     );
     context.pop();
   }

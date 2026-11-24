@@ -11,6 +11,7 @@ import '../../data/models/master.dart';
 import '../../data/models/order.dart';
 import '../../data/repositories/checkout_repository.dart';
 import '../../state/order_controller.dart';
+import '../../widgets/app_snackbar.dart';
 import '../../widgets/copy_field.dart';
 import '../../widgets/empty_state.dart';
 import '../../widgets/error_banner.dart';
@@ -116,8 +117,10 @@ class _PaymentScreenState extends State<PaymentScreen> {
       _uploading = false;
       _bytes = null;
     });
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Bukti terkirim. Menunggu verifikasi.')),
+    showRnzSnackBar(
+      context,
+      message: 'Bukti terkirim. Menunggu verifikasi.',
+      type: SnackType.info,
     );
   }
 

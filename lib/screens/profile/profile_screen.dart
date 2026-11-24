@@ -6,31 +6,23 @@ import 'package:url_launcher/url_launcher.dart';
 import '../../core/constants.dart';
 import '../../data/models/user.dart';
 import '../../state/auth_controller.dart';
+import '../../widgets/app_dialog.dart';
+import '../../widgets/app_snackbar.dart';
 import '../../widgets/main_scaffold.dart';
 
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({super.key});
 
   Future<void> _logout(BuildContext context) async {
-    final confirmed = await showDialog<bool>(
-      context: context,
-      builder: (dialogContext) => AlertDialog(
-        title: const Text('Keluar dari Akun?'),
-        content: const Text(
+    final confirmed = await showRnzConfirm(
+      context,
+      title: 'Keluar dari Akun?',
+      message:
           'Anda harus masuk kembali untuk melihat pesanan dan keranjang.',
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(dialogContext).pop(false),
-            child: const Text('Batal'),
-          ),
-          FilledButton(
-            key: const Key('profile-logout-confirm'),
-            onPressed: () => Navigator.of(dialogContext).pop(true),
-            child: const Text('Keluar'),
-          ),
-        ],
-      ),
+      cancelLabel: 'Batal',
+      confirmLabel: 'Keluar',
+      type: DialogType.warning,
+      confirmKey: const Key('profile-logout-confirm'),
     );
     if (confirmed != true || !context.mounted) return;
     await context.read<AuthController>().logout();
@@ -45,14 +37,18 @@ class ProfileScreen extends StatelessWidget {
         mode: LaunchMode.externalApplication,
       );
       if (!launched && context.mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Tidak dapat membuka WhatsApp.')),
+        showRnzSnackBar(
+          context,
+          message: 'Tidak dapat membuka WhatsApp.',
+          type: SnackType.error,
         );
       }
     } catch (_) {
       if (context.mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Tidak dapat membuka tautan kontak.')),
+        showRnzSnackBar(
+          context,
+          message: 'Tidak dapat membuka tautan kontak.',
+          type: SnackType.error,
         );
       }
     }

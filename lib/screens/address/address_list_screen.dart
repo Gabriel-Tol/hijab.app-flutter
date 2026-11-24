@@ -6,6 +6,8 @@ import '../../core/constants.dart';
 import '../../data/models/address.dart';
 import '../../data/repositories/profile_repository.dart';
 import '../../state/auth_controller.dart';
+import '../../widgets/app_dialog.dart';
+import '../../widgets/app_snackbar.dart';
 import '../../widgets/rnz_button.dart';
 
 class AddressListScreen extends StatefulWidget {
@@ -51,25 +53,14 @@ class _AddressListScreenState extends State<AddressListScreen> {
   }
 
   Future<void> _delete(Address address) async {
-    final confirmed = await showDialog<bool>(
-      context: context,
-      builder: (dialogContext) => AlertDialog(
-        title: const Text('Hapus alamat?'),
-        content: Text(
-          'Alamat “${address.label}” akan dihapus dari daftar alamat Anda.',
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(dialogContext).pop(false),
-            child: const Text('Batal'),
-          ),
-          FilledButton(
-            key: const Key('address-delete-confirm'),
-            onPressed: () => Navigator.of(dialogContext).pop(true),
-            child: const Text('Hapus'),
-          ),
-        ],
-      ),
+    final confirmed = await showRnzConfirm(
+      context,
+      title: 'Hapus alamat?',
+      message: 'Alamat “${address.label}” akan dihapus dari daftar alamat Anda.',
+      cancelLabel: 'Batal',
+      confirmLabel: 'Hapus',
+      type: DialogType.danger,
+      confirmKey: const Key('address-delete-confirm'),
     );
     if (confirmed != true || !mounted) return;
 
@@ -81,8 +72,8 @@ class _AddressListScreenState extends State<AddressListScreen> {
     );
     if (!mounted) return;
     if (!result.isOk) {
-      ScaffoldMessenger.of(context)
-          .showSnackBar(SnackBar(content: Text(result.error!.message)));
+      showRnzSnackBar(context, message: result.error!.message,
+          type: SnackType.error);
       return;
     }
     _reload();
@@ -97,8 +88,8 @@ class _AddressListScreenState extends State<AddressListScreen> {
     );
     if (!mounted) return;
     if (!result.isOk) {
-      ScaffoldMessenger.of(context)
-          .showSnackBar(SnackBar(content: Text(result.error!.message)));
+      showRnzSnackBar(context, message: result.error!.message,
+          type: SnackType.error);
       return;
     }
     _reload();

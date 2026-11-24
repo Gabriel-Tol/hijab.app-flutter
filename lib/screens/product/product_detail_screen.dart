@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
 import '../../core/constants.dart';
+import '../../widgets/app_snackbar.dart';
 import '../../core/formatters.dart';
 import '../../data/models/catalog.dart';
 import '../../data/repositories/catalog_repository.dart';
@@ -153,9 +154,11 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
     final message = result.isOk
         ? '$_qty ${variant.label} ditambahkan ke keranjang.'
         : result.error!.fields[variant.id] ?? result.error!.message;
-    ScaffoldMessenger.of(
+    showRnzSnackBar(
       context,
-    ).showSnackBar(SnackBar(content: Text(message)));
+      message: message,
+      type: result.isOk ? SnackType.success : SnackType.error,
+    );
   }
 
   @override

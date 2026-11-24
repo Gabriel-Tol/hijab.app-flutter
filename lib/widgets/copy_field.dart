@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 import '../core/constants.dart';
+import 'app_snackbar.dart';
 
 class CopyField extends StatelessWidget {
   const CopyField({
@@ -67,8 +68,10 @@ class CopyField extends StatelessWidget {
             onPressed: () async {
               await Clipboard.setData(ClipboardData(text: value));
               if (!context.mounted) return;
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('Nomor disalin')),
+              showRnzSnackBar(
+                context,
+                message: 'Nomor disalin',
+                type: SnackType.success,
               );
             },
             icon: const Icon(Icons.copy, size: 20),

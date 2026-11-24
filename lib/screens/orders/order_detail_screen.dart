@@ -7,6 +7,8 @@ import '../../core/formatters.dart';
 import '../../core/result.dart';
 import '../../data/models/order.dart';
 import '../../state/order_controller.dart';
+import '../../widgets/app_dialog.dart';
+import '../../widgets/app_snackbar.dart';
 import '../../widgets/copy_field.dart';
 import '../../widgets/empty_state.dart';
 import '../../widgets/rnz_button.dart';
@@ -53,26 +55,17 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
     required String title,
     required String message,
     required String confirmKey,
-  }) async {
-    final result = await showDialog<bool>(
-      context: context,
-      builder: (dialogContext) => AlertDialog(
-        title: Text(title),
-        content: Text(message),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(dialogContext).pop(false),
-            child: const Text('Batal'),
-          ),
-          FilledButton(
-            key: Key(confirmKey),
-            onPressed: () => Navigator.of(dialogContext).pop(true),
-            child: const Text('Ya'),
-          ),
-        ],
-      ),
+    DialogType type = DialogType.warning,
+  }) {
+    return showRnzConfirm(
+      context,
+      title: title,
+      message: message,
+      cancelLabel: 'Batal',
+      confirmLabel: 'Ya',
+      type: type,
+      confirmKey: Key(confirmKey),
     );
-    return result == true;
   }
 
   Future<void> _cancel() async {
@@ -80,6 +73,7 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
       title: 'Batalkan pesanan?',
       message: 'Pesanan akan dibatalkan dan stok produk dikembalikan.',
       confirmKey: 'cancel-confirm',
+      type: DialogType.danger,
     );
     if (!confirmed || !mounted) return;
     setState(() => _busy = true);
@@ -94,6 +88,7 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
       title: 'Pesanan diterima?',
       message: 'Konfirmasi bahwa pesanan sudah Anda terima dengan baik.',
       confirmKey: 'complete-confirm',
+      type: DialogType.success,
     );
     if (!confirmed || !mounted) return;
     setState(() => _busy = true);
@@ -106,8 +101,10 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
   }
 
   void _report(AppResult<void> result, String success) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(result.isOk ? success : result.error!.message)),
+    showRnzSnackBar(
+      context,
+      message: result.isOk ? success : result.error!.message,
+      type: result.isOk ? SnackType.success : SnackType.error,
     );
   }
 

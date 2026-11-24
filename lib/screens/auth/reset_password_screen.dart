@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
 import '../../core/constants.dart';
+import '../../widgets/app_snackbar.dart';
 import '../../core/validators.dart';
 import '../../state/auth_controller.dart';
 import '../../widgets/error_banner.dart';
@@ -81,8 +82,10 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
     }
 
     auth.refresh();
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Kata sandi berhasil diubah.')),
+    showRnzSnackBar(
+      context,
+      message: 'Kata sandi berhasil diubah.',
+      type: SnackType.success,
     );
     context.go('/login');
   }

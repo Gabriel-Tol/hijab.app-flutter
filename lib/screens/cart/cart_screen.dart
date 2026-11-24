@@ -3,6 +3,8 @@ import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
 import '../../core/constants.dart';
+import '../../widgets/app_dialog.dart';
+import '../../widgets/app_snackbar.dart';
 import '../../core/formatters.dart';
 import '../../data/models/cart.dart';
 import '../../state/cart_controller.dart';
@@ -27,26 +29,16 @@ class _CartScreenState extends State<CartScreen> {
   }
 
   Future<void> _clear() async {
-    final confirmed = await showDialog<bool>(
-      context: context,
-      builder: (dialogContext) => AlertDialog(
-        title: const Text('Kosongkan keranjang?'),
-        content: const Text(
+    final confirmed = await showRnzConfirm(
+      context,
+      title: 'Kosongkan keranjang?',
+      message:
           'Semua produk di keranjang akan dihapus. Tindakan ini tidak dapat '
           'diurungkan.',
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(dialogContext).pop(false),
-            child: const Text('Batal'),
-          ),
-          FilledButton(
-            key: const Key('cart-clear-confirm'),
-            onPressed: () => Navigator.of(dialogContext).pop(true),
-            child: const Text('Kosongkan'),
-          ),
-        ],
-      ),
+      cancelLabel: 'Batal',
+      confirmLabel: 'Kosongkan',
+      type: DialogType.danger,
+      confirmKey: const Key('cart-clear-confirm'),
     );
     if (confirmed != true || !mounted) return;
     await context.read<CartController>().clear();
@@ -58,39 +50,34 @@ class _CartScreenState extends State<CartScreen> {
     final qty = line.qty;
     messenger.hideCurrentSnackBar();
     cart.remove(line.variant.id);
-    messenger.showSnackBar(
-      SnackBar(
-        content: Text('${line.product.name} dihapus.'),
-        duration: AppConstants.undoWindow,
-        action: SnackBarAction(
-          label: 'Urungkan',
-          onPressed: () {
-            final result = cart.add(line.variant.id, qty: qty);
-            if (!result.isOk) {
-              messenger.showSnackBar(
-                SnackBar(
-                  content: Text(
-                    result.error!.fields[line.variant.id] ??
-                        result.error!.message,
-                  ),
-                ),
-              );
-            }
-          },
-        ),
-      ),
+    showRnzSnackBar(
+      context,
+      message: '${line.product.name} dihapus.',
+      duration: AppConstants.undoWindow,
+      type: SnackType.info,
+      onAction: () {
+        final result = cart.add(line.variant.id, qty: qty);
+        if (!result.isOk) {
+          showRnzSnackBar(
+            context,
+            message:
+                result.error!.fields[line.variant.id] ?? result.error!.message,
+            type: SnackType.error,
+          );
+        }
+      },
+      actionLabel: 'Urungkan',
     );
   }
 
   void _setQty(CartLine line, int qty) {
     final result = context.read<CartController>().setQty(line.variant.id, qty);
     if (result.isOk || !mounted) return;
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(
+    showRnzSnackBar(
+      context,
+      message:
           result.error!.fields[line.variant.id] ?? result.error!.message,
-        ),
-      ),
+      type: SnackType.error,
     );
   }
 

@@ -3,6 +3,8 @@ import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
 import '../../core/constants.dart';
+import '../../widgets/app_dialog.dart';
+import '../../widgets/app_snackbar.dart';
 import '../../core/validators.dart';
 import '../../data/repositories/profile_repository.dart';
 import '../../state/auth_controller.dart';
@@ -35,27 +37,16 @@ class _DeleteAccountScreenState extends State<DeleteAccountScreen> {
     setState(() => _error = null);
     if (!(_formKey.currentState?.validate() ?? false)) return;
 
-    final confirmed = await showDialog<bool>(
-      context: context,
-      builder: (dialogContext) => AlertDialog(
-        title: const Text('Hapus Akun Permanen?'),
-        content: const Text(
+    final confirmed = await showRnzConfirm(
+      context,
+      title: 'Hapus Akun Permanen?',
+      message:
           'Tindakan ini tidak dapat dibatalkan. Riwayat pesanan Anda akan '
           'dianonimkan dan sesi Anda akan dihapus.',
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(dialogContext).pop(false),
-            child: const Text('Batal'),
-          ),
-          FilledButton(
-            key: const Key('delete-confirm-dialog'),
-            style: FilledButton.styleFrom(backgroundColor: AppColors.danger),
-            onPressed: () => Navigator.of(dialogContext).pop(true),
-            child: const Text('Hapus Akun'),
-          ),
-        ],
-      ),
+      cancelLabel: 'Batal',
+      confirmLabel: 'Hapus Akun',
+      type: DialogType.danger,
+      confirmKey: const Key('delete-confirm-dialog'),
     );
     if (confirmed != true || !mounted) return;
 
@@ -76,8 +67,10 @@ class _DeleteAccountScreenState extends State<DeleteAccountScreen> {
 
     await auth.logout();
     if (!mounted) return;
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Akun Anda telah berhasil dihapus.')),
+    showRnzSnackBar(
+      context,
+      message: 'Akun Anda telah berhasil dihapus.',
+      type: SnackType.success,
     );
     context.go('/home');
   }
