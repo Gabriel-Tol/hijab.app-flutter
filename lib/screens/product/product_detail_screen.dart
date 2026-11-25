@@ -239,22 +239,40 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                 child: InteractiveViewer(
                   minScale: 1,
                   maxScale: 4,
-                  child: Image.asset(
-                    product.images[index],
-                    fit: BoxFit.cover,
-                    width: double.infinity,
-                    semanticLabel: '${product.name} ${index + 1}',
-                    errorBuilder: (context, error, stackTrace) => const ColoredBox(
-                      color: AppColors.line,
-                      child: Center(
-                        child: Icon(
-                          Icons.image_outlined,
-                          size: 48,
-                          color: AppColors.muted,
+                  child: product.images[index].startsWith('http://') ||
+                          product.images[index].startsWith('https://')
+                      ? Image.network(
+                          product.images[index],
+                          fit: BoxFit.cover,
+                          width: double.infinity,
+                          semanticLabel: '${product.name} ${index + 1}',
+                          errorBuilder: (context, error, stackTrace) => const ColoredBox(
+                            color: AppColors.line,
+                            child: Center(
+                              child: Icon(
+                                Icons.image_outlined,
+                                size: 48,
+                                color: AppColors.muted,
+                              ),
+                            ),
+                          ),
+                        )
+                      : Image.asset(
+                          product.images[index],
+                          fit: BoxFit.cover,
+                          width: double.infinity,
+                          semanticLabel: '${product.name} ${index + 1}',
+                          errorBuilder: (context, error, stackTrace) => const ColoredBox(
+                            color: AppColors.line,
+                            child: Center(
+                              child: Icon(
+                                Icons.image_outlined,
+                                size: 48,
+                                color: AppColors.muted,
+                              ),
+                            ),
+                          ),
                         ),
-                      ),
-                    ),
-                  ),
                 ),
               );
             },

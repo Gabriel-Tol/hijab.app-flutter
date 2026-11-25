@@ -465,7 +465,9 @@ class ApiClient {
     try {
       final decoded = jsonDecode(response.body);
       if (response.statusCode >= 200 && response.statusCode < 300) {
-        final list = decoded['data'] as List<dynamic>?;
+        final data = decoded['data'];
+        // API returns {products: [...], total, ...} not a plain list
+        final list = data is List ? data : (data is Map ? data['products'] as List<dynamic>? : null);
         if (list != null) {
           return Future.value(AppResult.ok(list));
         }

@@ -48,7 +48,7 @@ class CatalogController extends BaseApiController
         $offset     = ($page - 1) * $limit;
 
         $builder = $db->table('products')
-            ->select('products.id, products.category_id, products.name, products.slug, products.description, products.price, categories.name as category_name, (SELECT file_path FROM product_images WHERE product_images.product_id = products.id ORDER BY sort_order ASC LIMIT 1) as thumbnail, COALESCE(SUM(product_variants.stock), 0) as total_stock')
+            ->select('products.id, products.category_id, products.name, products.slug, products.description, products.price, products.created_at, categories.name as category_name, (SELECT file_path FROM product_images WHERE product_images.product_id = products.id ORDER BY sort_order ASC LIMIT 1) as thumbnail, COALESCE(SUM(product_variants.stock), 0) as total_stock')
             ->join('categories', 'categories.id = products.category_id', 'left')
             ->join('product_variants', 'product_variants.product_id = products.id AND product_variants.is_active = 1', 'left')
             ->where('products.is_active', 1)
@@ -67,12 +67,38 @@ class CatalogController extends BaseApiController
         $total = $builder->countAllResults(false);
         $products = $builder->limit($limit, $offset)->get()->getResultArray();
 
-        // Convert thumbnail to full accessible URL
+        // Enrich each product with images, variants, and full thumbnail URL
         $baseUrl = base_url();
+        $productIds = array_column($products, 'id');
+
+        // Batch-load variants & images for all returned products
+        $allVariants = [];
+        $allImages   = [];
+        if (!empty($productIds)) {
+            $rows = $db->table('product_variants')
+                ->whereIn('product_id', $productIds)
+                ->where('is_active', 1)
+                ->get()->getResultArray();
+            foreach ($rows as $v) {
+                $v['stock'] = (int)$v['stock'];
+                $allVariants[$v['product_id']][] = $v;
+            }
+
+            $imgRows = $db->table('product_images')
+                ->whereIn('product_id', $productIds)
+                ->orderBy('sort_order', 'ASC')
+                ->get()->getResultArray();
+            foreach ($imgRows as $img) {
+                $allImages[$img['product_id']][] = rtrim($baseUrl, '/') . '/' . ltrim($img['file_path'], '/');
+            }
+        }
+
         foreach ($products as &$p) {
             $p['thumbnail_url'] = !empty($p['thumbnail']) ? rtrim($baseUrl, '/') . '/' . ltrim($p['thumbnail'], '/') : null;
             $p['price']         = (int)$p['price'];
             $p['total_stock']   = (int)$p['total_stock'];
+            $p['variants']      = $allVariants[$p['id']] ?? [];
+            $p['images']        = $allImages[$p['id']] ?? [];
         }
 
         return $this->respondWithSuccess([

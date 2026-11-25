@@ -50,14 +50,20 @@ class ProductVariant {
   }
 
   factory ProductVariant.fromJson(Map<String, dynamic> json) {
+    final rawId = json['id'];
+    final rawProductId = json['productId'] ?? json['product_id'];
+    final rawActive = json['isActive'] ?? json['is_active'];
+    final rawStock = json['stock'];
     return ProductVariant(
-      id: json['id'] as String,
-      productId: json['productId'] as String,
-      color: json['color'] as String,
+      id: rawId is int ? rawId.toString() : rawId as String,
+      productId:
+          rawProductId is int ? rawProductId.toString() : rawProductId as String,
+      color: (json['color'] ?? '') as String,
       size: json['size'] as String?,
       sku: json['sku'] as String?,
-      stock: json['stock'] as int,
-      isActive: json['isActive'] as bool? ?? true,
+      stock: rawStock is int ? rawStock : int.parse(rawStock.toString()),
+      isActive:
+          rawActive is bool ? rawActive : (rawActive?.toString() == '1' || rawActive == null),
     );
   }
 
@@ -124,26 +130,38 @@ class Product {
   }
 
   factory Product.fromJson(Map<String, dynamic> json) {
+    final rawId = json['id'];
+    final rawDeleted = json['deletedAt'] ?? json['deleted_at'];
+    final rawCreated = json['createdAt'] ?? json['created_at'];
+    final rawActive = json['isActive'] ?? json['is_active'];
     return Product(
-      id: json['id'] as String,
-      categoryId: json['categoryId'] as String,
+      id: rawId is int ? rawId.toString() : rawId as String,
+      categoryId: (json['categoryId'] ?? json['category_id']).toString(),
       name: json['name'] as String,
-      description: json['description'] as String,
-      price: json['price'] as int,
-      isActive: json['isActive'] as bool? ?? true,
-      deletedAt: json['deletedAt'] == null
+      description: (json['description'] ?? '') as String,
+      price: json['price'] is int ? json['price'] as int : int.parse(json['price'].toString()),
+      isActive: rawActive is bool ? rawActive : (rawActive?.toString() == '1' || rawActive == null),
+      deletedAt: rawDeleted == null
           ? null
-          : DateTime.parse(json['deletedAt'] as String),
-      images: (json['images'] as List<dynamic>? ?? const [])
-          .cast<String>(),
+          : DateTime.parse(rawDeleted as String),
+      images: _parseImages(json['images']),
       variants: (json['variants'] as List<dynamic>? ?? const [])
           .map(
             (item) =>
                 ProductVariant.fromJson(Map<String, dynamic>.from(item as Map)),
           )
           .toList(growable: false),
-      createdAt: DateTime.parse(json['createdAt'] as String),
+      createdAt: rawCreated != null
+          ? DateTime.parse(rawCreated as String)
+          : DateTime.now(),
     );
+  }
+
+  /// Parse images from either a list of strings (seed) or list of URL strings (API)
+  static List<String> _parseImages(dynamic raw) {
+    if (raw == null) return const [];
+    if (raw is List) return raw.map((e) => e.toString()).toList();
+    return const [];
   }
 
   Map<String, dynamic> toJson() {

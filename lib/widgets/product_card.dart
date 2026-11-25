@@ -46,6 +46,21 @@ class ProductCard extends StatelessWidget {
                             color: AppColors.muted,
                           ),
                         )
+                      else if (image.startsWith('http://') || image.startsWith('https://'))
+                        Image.network(
+                          image,
+                          fit: BoxFit.cover,
+                          semanticLabel: product.name,
+                          errorBuilder: (context, error, stackTrace) {
+                            return Container(
+                              color: AppColors.line,
+                              child: const Icon(
+                                Icons.image_outlined,
+                                color: AppColors.muted,
+                              ),
+                            );
+                          },
+                        )
                       else
                         Image.asset(
                           image,
